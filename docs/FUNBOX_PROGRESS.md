@@ -143,3 +143,9 @@
 - Added local guest favorites and watchlist state for Clipbox titles, with separate flags and private app storage. The native detail screen now offers favorite and watchlist actions, and the existing unified Favorites destination shows saved Clipbox movies, series, and watchlist beside StreamVault saved items.
 - This guest state is deliberately separate from Clipbox account synchronization. No account session was supplied or created, and remote sync behavior is not yet verified. Continue watching and watched episode state remain open.
 - Changes are awaiting an incremental build and UI validation. The first local full build is still finishing other app tasks; no APK is claimed yet.
+
+## Stage 13 — first complete compiler pass and fix
+
+- The first local `assembleDebug` compiled the data and feature modules, then failed in `app:compileDebugKotlin` because the shell imported `androidx.compose.ui.unit.size` instead of the layout modifier extension. Fixed the import; CI reported the same source error.
+- A CI run also found configuration-cache incompatibilities in inherited project validation tasks. The FunBOX APK workflow now explicitly runs without Gradle's configuration cache.
+- A new local build is running with the navigation fix and the guest library/search changes. The APK remains pending and must be verified after a successful build.

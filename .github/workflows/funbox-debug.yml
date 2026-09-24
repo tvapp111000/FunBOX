@@ -28,7 +28,7 @@ jobs:
       - name: Build and test
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug testDebugUnitTest --no-daemon
+          ./gradlew assembleDebug testDebugUnitTest --no-daemon --no-configuration-cache
       - name: Upload installable debug APK
         uses: actions/upload-artifact@v4
         with:
