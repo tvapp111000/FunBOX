@@ -31,6 +31,8 @@ internal object AppRoutePatterns {
     const val PROVIDER_SETUP = ProviderRoutePatterns.PROVIDER_SETUP
     const val MOVIE_DETAIL = CatalogRoutePatterns.MOVIE_DETAIL
     const val SERIES_DETAIL = CatalogRoutePatterns.SERIES_DETAIL
+    const val CLIPBOX_MOVIE_DETAIL = CatalogRoutePatterns.CLIPBOX_MOVIE_DETAIL
+    const val CLIPBOX_SERIES_DETAIL = CatalogRoutePatterns.CLIPBOX_SERIES_DETAIL
     const val PARENTAL_CONTROL_GROUPS = "parental_control_groups/{providerId}"
     const val MULTI_VIEW = PlaybackRoutePatterns.MULTI_VIEW
 }
@@ -72,6 +74,14 @@ internal object AppRouteCodec {
         is AppDestination.SeriesDetail -> {
             val returnRoute = destination.returnDestination?.let(::encode).orEmpty()
             "series_detail/${destination.seriesId}?returnRoute=${Uri.encode(returnRoute)}"
+        }
+        is AppDestination.ClipboxMovieDetail -> {
+            val returnRoute = destination.returnDestination?.let(::encode).orEmpty()
+            "clipbox_movie_detail/${destination.movieId}?returnRoute=${Uri.encode(returnRoute)}"
+        }
+        is AppDestination.ClipboxSeriesDetail -> {
+            val returnRoute = destination.returnDestination?.let(::encode).orEmpty()
+            "clipbox_series_detail/${destination.seriesId}?returnRoute=${Uri.encode(returnRoute)}"
         }
         is AppDestination.ParentalControlGroups ->
             "${AppRoutePatterns.PARENTAL_CONTROL_GROUPS.substringBefore("/{")}/${destination.providerId}"
@@ -117,6 +127,12 @@ internal object AppRouteCodec {
             )
             path.startsWith("movie_detail/") -> decodeMovieDetail(path, query)
             path.startsWith("series_detail/") -> decodeSeriesDetail(path, query)
+            path.startsWith("clipbox_movie_detail/") -> path.substringAfter("clipbox_movie_detail/")
+                .toLongOrNull()?.takeIf { it > 0L }
+                ?.let { AppDestination.ClipboxMovieDetail(it, decodeReturnDestination(query["returnRoute"])) }
+            path.startsWith("clipbox_series_detail/") -> path.substringAfter("clipbox_series_detail/")
+                .toLongOrNull()?.takeIf { it > 0L }
+                ?.let { AppDestination.ClipboxSeriesDetail(it, decodeReturnDestination(query["returnRoute"])) }
             path.startsWith("parental_control_groups/") -> path
                 .substringAfter("parental_control_groups/")
                 .toLongOrNull()
@@ -132,7 +148,9 @@ internal object AppRouteCodec {
             AppDestination.Plugins,
             is AppDestination.ProviderSetup,
             is AppDestination.MovieDetail,
-            is AppDestination.SeriesDetail -> destination
+            is AppDestination.SeriesDetail,
+            is AppDestination.ClipboxMovieDetail,
+            is AppDestination.ClipboxSeriesDetail -> destination
             else -> null
         }
     }

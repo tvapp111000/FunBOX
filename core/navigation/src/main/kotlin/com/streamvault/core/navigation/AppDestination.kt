@@ -39,6 +39,14 @@ sealed interface AppDestination : Serializable {
             require(seriesId > 0L) { "seriesId must be positive" }
         }
     }
+    data class ClipboxMovieDetail(
+        val movieId: Long,
+        val returnDestination: AppDestination? = null
+    ) : AppDestination
+    data class ClipboxSeriesDetail(
+        val seriesId: Long,
+        val returnDestination: AppDestination? = null
+    ) : AppDestination
     data class ParentalControlGroups(val providerId: Long) : AppDestination {
         init {
             require(providerId > 0L) { "providerId must be positive" }

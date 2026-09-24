@@ -112,3 +112,15 @@
 1. Build a native Clipbox catalog repository with the verified endpoints and bind Home, Movies, Series, details, seasons/episodes, and search.
 2. Continue source/playback and account state flows separately; do not claim end-to-end Clipbox integration yet.
 3. Isolate the Gradle/JDK file operation failure and obtain an APK locally or through CI, then push and open the PR.
+
+## Stage 9 — native Clipbox catalog wiring and Gradle diagnosis
+
+- Added `ClipboxCatalogRepository` in the data layer. It obtains the short-lived catalog key from signed Clipbox config, calls only `api.themoviedb.org`, blocks redirects, parses Home trending, movie/series pages, search, details, seasons, and episodes, and keeps recent pages in memory.
+- Added Compose/ViewModel screens for Clipbox Home, Movies, Series, movie/series details, season selection and episode metadata. The three primary destinations now point at this native Clipbox data flow. New Clipbox detail routes are separate from existing StreamVault VOD detail routes.
+- Episode source selection, playback, saved state, and unified search are **not** wired yet. The screens and repository need a successful build and on-device check before they can be marked complete.
+- Traced the local Gradle error to Java `Path.toRealPath()` on sandbox-created files: it fails on the original JAR, a copy under the workspace, and a copy under Temp despite normal ACLs. A narrowly escalated `assembleDebug` run has passed the previous immediate failure and is still running at this checkpoint.
+
+### Verification and next
+
+- The live upstream catalog contract was verified in Stage 8; the new Kotlin layer has only static checks at this checkpoint. `git diff --check` passes.
+- Finish the build, fix compiler errors, run unit tests, then implement unified search and legal source/playback flows. Push and open PR when GitHub authentication is available.
