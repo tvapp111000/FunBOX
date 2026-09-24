@@ -38,6 +38,20 @@ if (localPropertiesFile.exists()) {
 
 fun localProp(key: String): String = localProperties.getProperty(key, "")
 
+fun clipboxBuildValue(name: String, localName: String): String =
+    providers.environmentVariable(name).orNull
+        ?: providers.gradleProperty(name).orNull
+        ?: localProp(localName)
+
+val clipboxApiKey = clipboxBuildValue("CLIPBOX_API_KEY", "clipbox.api.key")
+val clipboxSigningDigest = clipboxBuildValue("CLIPBOX_SIGNING_DIGEST", "clipbox.signing.digest")
+require(clipboxApiKey.isEmpty() || Regex("[A-Za-z0-9_-]+").matches(clipboxApiKey)) {
+    "CLIPBOX_API_KEY has an unsupported format"
+}
+require(clipboxSigningDigest.isEmpty() || Regex("[0-9A-Fa-f]{64}").matches(clipboxSigningDigest)) {
+    "CLIPBOX_SIGNING_DIGEST must be a SHA-256 hex digest"
+}
+
 val funboxReleaseRepository = providers.gradleProperty("funboxReleaseRepository").orNull
     ?: localProp("funbox.release.repository").ifBlank { "tvapp111000/FunBOX" }
 require(funboxReleaseRepository.isEmpty() ||
@@ -85,6 +99,8 @@ android {
         buildConfigField("String", "OFFICIAL_SIGNING_CERT_SHA256", "\"$officialSigningCertSha256\"")
         buildConfigField("String", "APP_UPDATE_CHANNEL", "\"stable\"")
         buildConfigField("String", "FUNBOX_RELEASE_REPOSITORY", "\"$funboxReleaseRepository\"")
+        buildConfigField("String", "CLIPBOX_API_KEY", "\"$clipboxApiKey\"")
+        buildConfigField("String", "CLIPBOX_SIGNING_DIGEST", "\"$clipboxSigningDigest\"")
         buildConfigField("long", "BUILD_TIMESTAMP_UTC", "0L")
         ndk {
             abiFilters += listOf("arm64-v8a", "armeabi-v7a")

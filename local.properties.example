@@ -43,3 +43,8 @@
 # m3u.dev.name=iptv-org France
 # GitHub owner/repository for FunBOX releases (optional override).
 # funbox.release.repository=tvapp111000/FunBOX
+
+# Clipbox service gate (authorized APK-derived values; never commit filled values).
+# clipbox.api.key=
+# clipbox.signing.digest=
+# CI can use CLIPBOX_API_KEY and CLIPBOX_SIGNING_DIGEST environment secrets.

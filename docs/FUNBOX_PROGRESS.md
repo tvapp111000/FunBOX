@@ -88,3 +88,14 @@
 
 - `git diff --check` passes. Source compilation and unit tests are still blocked locally by the Gradle/JAR access error before project compilation; navigation changes need CI compilation and device validation.
 - Implement verified Clipbox authentication and native catalog flows, source selection and playback; finish provider selection and state adapters; run build, tests, emulator checks and CI; push branch and open PR.
+
+## Stage 7 — signed Clipbox service adapter
+
+- Reproduced Clipbox's HMAC request signature from the authorized APK without logging or committing the static app key or signing digest. A signed service request passes the integrity gate: `/api/config` returns the complete config and `/api/auth/me` returns 401 specifically because no user token is available.
+- Added a dedicated `ClipboxApi` data-layer adapter and Hilt configuration. It allows credentials only on the three HTTPS hosts listed by the APK and disables redirects; the account check keeps user authentication separate. Local credentials are in ignored `local.properties`. CI can provide `CLIPBOX_API_KEY` and `CLIPBOX_SIGNING_DIGEST` as secrets.
+- Confirmed that the Clipbox Home, Movies, Series, details, and search catalog comes from TMDB using a key in signed Clipbox config. Because the user's host restriction forbids transmitting that key to TMDB under the current authorization, destination-specific approval is pending. No catalog request has been made using that key.
+
+### Verification and remaining work
+
+- Live signed request statuses were checked against the original Clipbox host; no key, signature, token, or full response body was logged. `git diff --check` passes.
+- Integrate the Clipbox catalog and playback once the permitted host boundary is clarified. Local Gradle still cannot compile before source compilation due to the JAR access error; CI push requires GitHub CLI authorization.
