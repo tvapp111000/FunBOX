@@ -57,3 +57,16 @@
 
 - Review of the changed release URL and assets was static. Gradle remains blocked before project compilation by the local Java/JAR access restriction described above.
 - Continue with the requested primary navigation and native Clipbox integration. Set `funbox.release.repository` only after the user identifies the FunBOX repository.
+
+## Stage 4 — splash, locale completeness, and GitHub fork
+
+- Wired the supplied FunBOX splash artwork into the launch window without enlarging the 1280×720 image.
+- Added the 17 Hebrew string translations missing from the app resource bundle, and changed Android TV input setup copy to FunBOX across localized strings.
+- The user authorized a fork in their account; `https://github.com/tvapp111000/FunBOX` was created from StreamVault `master` and configured as the app's default release repository.
+- Read-only probes of both Clipbox host candidates returned HTTP 403 from this environment. The API contract, catalog responses, playback, and authentication remain unverified.
+
+### Verification and next steps
+
+- Parsed all edited XML resource files and ran `git diff --check` successfully. No emulator check yet.
+- A fresh local `assembleDebug` attempt still stops during Gradle generated-accessor compilation with `AccessDeniedException` when closing a Gradle JAR; no project source has compiled locally.
+- Commit and push the branch to the fork, inspect GitHub Actions, then fix any reported build failures. Continue native Clipbox implementation only against verified authorized endpoints.

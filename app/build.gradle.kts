@@ -39,7 +39,7 @@ if (localPropertiesFile.exists()) {
 fun localProp(key: String): String = localProperties.getProperty(key, "")
 
 val funboxReleaseRepository = providers.gradleProperty("funboxReleaseRepository").orNull
-    ?: localProp("funbox.release.repository")
+    ?: localProp("funbox.release.repository").ifBlank { "tvapp111000/FunBOX" }
 require(funboxReleaseRepository.isEmpty() ||
     Regex("[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+").matches(funboxReleaseRepository)) {
     "funboxReleaseRepository must be a GitHub owner/repository name"
