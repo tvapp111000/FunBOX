@@ -26,3 +26,22 @@
 
 - No Clipbox network flow is marked integrated until it returns data and the requested screens and playback are verified.
 - The original StreamVault license remains in the repository.
+
+## Stage 2 — built-in TV provider and Clipbox mapping
+
+- Added an idempotent first-launch provider initializer using StreamVault's existing M3U setup and sync path. It registers `FunBOX / עידן פלוס` at `http://tiny.cc/FanTV` and restores an existing user's active provider after initialization.
+- Removed the first-run requirement to visit provider setup; startup now proceeds to Home while provider sync runs.
+- Confirmed in source that StreamVault's M3U parser reads `tvg-id`, `tvg-name`, `tvg-logo`, `group-title`, `url-tvg`, and `x-tvg-url`; its sync path assigns playlist header EPG URLs to the provider. OkHttp is configured to follow redirects.
+- Added `docs/CLIPBOX_INTEGRATION_AUDIT.md` with findings from the authorized APK audit and explicitly unverified flows.
+
+### Verification and limitations
+
+- `http://tiny.cc/FanTV` could not be fetched from this Windows environment (request timed out); channel import and playback are not verified.
+- `assembleDebug` was attempted with JDK 21 and JDK 17. Both stop before project compilation because Gradle's generated accessor compiler receives `java.nio.file.AccessDeniedException` on a local Gradle JAR. The same failure reproduces with standalone `javac -cp` on that JAR. The sandbox policy rejected an unsandboxed build request. No APK is available yet.
+- `testDebugUnitTest`, emulator playback, and TV focus validation remain pending.
+
+### Next
+
+1. Resolve or bypass the local Gradle/JDK filesystem issue through an authorized build environment, then compile and fix source errors.
+2. Complete native Clipbox integration after live API and authentication contracts are validated; do not substitute unrelated scraping providers.
+3. Complete unified navigation, favorites, search, settings, player, and RTL focus checks.

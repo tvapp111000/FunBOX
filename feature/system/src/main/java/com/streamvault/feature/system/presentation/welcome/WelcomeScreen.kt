@@ -133,11 +133,7 @@ fun WelcomeScreen(
     val syncProgress by viewModel.syncProgress.collectAsStateWithLifecycle()
 
     LaunchedEffect(hasProviders, startupReady) {
-        when (hasProviders) {
-            true -> if (startupReady) onNavigateToHome()
-            false -> Unit
-            null -> Unit
-        }
+        if (startupReady && hasProviders != null) onNavigateToHome()
     }
 
     WelcomeContent(
@@ -170,22 +166,12 @@ internal fun WelcomeContent(
                 )
         )
 
-        when (hasProviders) {
-            false -> WelcomeStartCard(
-                onNavigateToHome = onNavigateToHome,
-                onNavigateToSetup = onNavigateToSetup,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(32.dp)
-            )
-
-            else -> WelcomeLoadingCard(
-                syncProgress = syncProgress,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(32.dp)
-            )
-        }
+        WelcomeLoadingCard(
+            syncProgress = syncProgress,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(32.dp)
+        )
     }
 }
 

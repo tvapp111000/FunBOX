@@ -61,12 +61,14 @@ internal class AppStartupCoordinator internal constructor(
         programReminderManager: Provider<ProgramReminderManager>,
         providerSyncLifecycle: Provider<ProviderSyncLifecycle>,
         pendingBackupRestoreCoordinator: Provider<PendingBackupRestoreCoordinator>,
+        funboxDefaultProviderInitializer: Provider<FunboxDefaultProviderInitializer>,
         watchNextManager: Provider<WatchNextManager>,
         launcherRecommendationsManager: Provider<LauncherRecommendationsManager>,
         tvInputChannelSyncManager: Provider<com.streamvault.app.tvinput.TvInputChannelSyncManager>
     ) : this(
         processTasks = listOf(
             providerTask("work-registration", startupWorkRegistry) { it.register() },
+            providerTask("funbox-default-provider", funboxDefaultProviderInitializer) { it.ensureConfigured() },
             AppStartupTask("stale-timeshift-cleanup") {
                 TimeshiftDiskManager(context.applicationContext)
                     .cleanupStaleDirectories(activeSessionDir = null)
