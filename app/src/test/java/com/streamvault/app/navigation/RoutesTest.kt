@@ -161,6 +161,7 @@ class RoutesTest {
         assertThat(AppTopLevelDestination.LIVE_TV.toAppRoute()).isEqualTo(Routes.LIVE_TV)
         assertThat(AppTopLevelDestination.MOVIES.toAppRoute()).isEqualTo(Routes.MOVIES)
         assertThat(AppTopLevelDestination.SERIES.toAppRoute()).isEqualTo(Routes.SERIES)
+        assertThat(AppTopLevelDestination.FAVORITES.toAppRoute()).isEqualTo(Routes.FAVORITES)
         assertThat(AppTopLevelDestination.DOWNLOADS.toAppRoute()).isEqualTo(Routes.DOWNLOADS)
         assertThat(AppTopLevelDestination.GUIDE.toAppRoute()).isEqualTo(Routes.EPG)
         assertThat(AppTopLevelDestination.SEARCH.toAppRoute()).isEqualTo(Routes.SEARCH)

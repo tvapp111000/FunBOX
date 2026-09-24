@@ -23,12 +23,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.size
+import androidx.tv.material3.Icon
 import com.streamvault.app.R
 import com.streamvault.app.navigation.Routes
 import com.streamvault.core.ui.components.shell.AppTopBarCloseAction
 import com.streamvault.core.ui.components.shell.CoreAppScreenScaffold
 import com.streamvault.core.ui.components.shell.NavigationChrome
 import com.streamvault.core.ui.components.shell.UiDestination
+import com.streamvault.core.ui.interaction.TvIconButton
 import com.streamvault.domain.model.AppTopLevelDestination
 import com.streamvault.domain.model.CatalogLayout
 
@@ -64,6 +67,7 @@ fun AppScreenScaffold(
         )
     val closeAppAction = LocalAppCloseAction.current
     val closeAppLabel = stringResource(R.string.nav_close_app)
+    val settingsLabel = stringResource(R.string.nav_settings)
 
     CoreAppScreenScaffold(
         currentDestinationId = currentRoute,
@@ -82,6 +86,15 @@ fun AppScreenScaffold(
         header = header,
         topBarActions = {
             topBarActions?.invoke(this)
+            if (!currentRoute.startsWith(Routes.SETTINGS)) {
+                TvIconButton(onClick = { onNavigate(Routes.SETTINGS) }) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = settingsLabel,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
             if (closeAppAction != null) {
                 AppTopBarCloseAction(
                     onClick = closeAppAction,
@@ -104,21 +117,7 @@ internal fun buildDestinationItems(
     configured: List<AppTopLevelDestination>,
     layout: CatalogLayout
 ): List<AppDestinationItem> {
-    if (layout == CatalogLayout.SPLIT) return configured.map { it.toDestinationItem() }
-
-    var insertedVod = false
-    return buildList {
-        configured.forEach { destination ->
-            when (destination) {
-                AppTopLevelDestination.MOVIES,
-                AppTopLevelDestination.SERIES -> if (!insertedVod) {
-                    add(AppDestinationItem(Routes.VOD, R.string.nav_vod, Icons.Default.Star))
-                    insertedVod = true
-                }
-                else -> add(destination.toDestinationItem())
-            }
-        }
-    }
+    return configured.map { it.toDestinationItem() }
 }
 
 @Composable
@@ -143,6 +142,7 @@ private fun AppTopLevelDestination.toDestinationItem(): AppDestinationItem = whe
     AppTopLevelDestination.LIVE_TV -> AppDestinationItem(Routes.LIVE_TV, R.string.nav_live_tv, Icons.Default.PlayArrow)
     AppTopLevelDestination.MOVIES -> AppDestinationItem(Routes.MOVIES, R.string.nav_movies, Icons.Default.Star)
     AppTopLevelDestination.SERIES -> AppDestinationItem(Routes.SERIES, R.string.nav_series, Icons.Default.Menu)
+    AppTopLevelDestination.FAVORITES -> AppDestinationItem(Routes.FAVORITES, R.string.nav_favorites, Icons.Default.Star)
     AppTopLevelDestination.DOWNLOADS -> AppDestinationItem(Routes.DOWNLOADS, R.string.nav_downloads, Icons.Default.Download)
     AppTopLevelDestination.GUIDE -> AppDestinationItem(Routes.EPG, R.string.nav_epg, Icons.Default.Info)
     AppTopLevelDestination.SEARCH -> AppDestinationItem(Routes.SEARCH, R.string.search_title, Icons.Default.Search)

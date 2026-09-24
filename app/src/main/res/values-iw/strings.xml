@@ -5,6 +5,7 @@
     <string name="nav_live_tv">טלוויזיה</string>
     <string name="nav_movies">סרטים</string>
     <string name="nav_series">סדרות</string>
+    <string name="nav_favorites">מועדפים</string>
     <string name="nav_epg">מדריך ערוצים</string>
     <string name="nav_settings">הגדרות</string>
     <string name="welcome_enter_app">היכנס לאפליקציה</string>

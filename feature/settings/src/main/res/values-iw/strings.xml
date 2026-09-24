@@ -392,6 +392,7 @@
 <string name="nav_movies">סרטים</string>
 <string name="nav_vod">VOD</string>
 <string name="nav_series">סדרה</string>
+<string name="nav_favorites">מועדפים</string>
 <string name="settings_category_mode_protection">נעילה / ביטול נעילה</string>
 <string name="settings_category_mode_visibility">הסתרה / הצגה</string>
 <string name="settings_category_protection_summary_title">שינויי נעילה נבדקים לפני שהם נכנסים לתוקף</string>

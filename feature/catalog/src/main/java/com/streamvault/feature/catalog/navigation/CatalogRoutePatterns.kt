@@ -4,6 +4,7 @@ object CatalogRoutePatterns {
     const val HOME = "home"
     const val MOVIES = "movies"
     const val SERIES = "series"
+    const val FAVORITES = "favorites"
     const val VOD = "vod"
     const val SEARCH = "search"
     const val SEARCH_DESTINATION = "search?query={query}"

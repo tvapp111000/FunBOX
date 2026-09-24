@@ -8,11 +8,11 @@ import org.junit.Test
 
 class CatalogRouteResolverTest {
     @Test
-    fun unifiedAndUnknownLayoutsUseVodRoute() {
+    fun unifiedAndUnknownLayoutsPreserveExplicitCatalogRoute() {
         assertThat(resolveCatalogDestination(CatalogLayout.UNIFIED_VOD, AppDestination.Movies, ContentType.MOVIE, true))
-            .isEqualTo(AppDestination.Vod)
+            .isEqualTo(AppDestination.Movies)
         assertThat(resolveCatalogDestination(CatalogLayout.UNKNOWN, AppDestination.Series, ContentType.SERIES, true))
-            .isEqualTo(AppDestination.Vod)
+            .isEqualTo(AppDestination.Series)
     }
 
     @Test

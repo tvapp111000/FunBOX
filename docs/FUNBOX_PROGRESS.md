@@ -77,3 +77,14 @@
 - Further APK inspection confirmed that Clipbox's own catalog uses TMDB data and that its private service requests include an app key plus a dynamic integrity header. Values were not logged or committed.
 - A credential-bearing service probe was automatically rejected because permission to transmit the recovered key to the particular remote hosts was not established. No key was transmitted. Continue the IPTV and UI work while this access requirement remains unresolved.
 - Four local commits exist. The fork exists, but pushing currently needs a GitHub CLI authorization; a narrow user decision is pending.
+
+## Stage 6 — FunBOX primary navigation and authorized Clipbox probe
+
+- Added the seven requested primary destinations in order: Home, TV, Movies, Series, Favorites, Guide, Search. Settings remains available from the shell header. The existing saved library is now reachable from the Favorites route, while legacy downloads and plugins remain accessible through existing flows.
+- Kept separate Movies and Series destinations for the FunBOX shell even when a provider uses StreamVault's unified VOD layout. Updated navigation route and unit test expectations. The catalog screens still use StreamVault data and have **not** been represented as Clipbox integration.
+- The user explicitly authorized credential-bearing tests only against the original Clipbox hosts found in the APK. A restricted HTTPS probe to `clipbox.mov` returned HTTP 200 from `/api/config`; the fallback `superbox.mov` returned HTTP 526. Catalog/auth requests to `clipbox.mov` returned HTTP 403 with an integrity-class rejection, so the app integrity signature algorithm is being reconstructed. No credential value was printed or committed.
+
+### Verification and remaining work
+
+- `git diff --check` passes. Source compilation and unit tests are still blocked locally by the Gradle/JAR access error before project compilation; navigation changes need CI compilation and device validation.
+- Implement verified Clipbox authentication and native catalog flows, source selection and playback; finish provider selection and state adapters; run build, tests, emulator checks and CI; push branch and open PR.

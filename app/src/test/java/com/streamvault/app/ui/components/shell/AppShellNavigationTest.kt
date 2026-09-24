@@ -21,11 +21,9 @@ class AppShellNavigationTest {
                 Routes.LIVE_TV,
                 Routes.MOVIES,
                 Routes.SERIES,
-                Routes.DOWNLOADS,
+                Routes.FAVORITES,
                 Routes.EPG,
-                Routes.SEARCH,
-                Routes.PLUGINS,
-                Routes.SETTINGS
+                Routes.SEARCH
             )
             .inOrder()
     }
@@ -43,7 +41,7 @@ class AppShellNavigationTest {
     }
 
     @Test
-    fun unifiedCatalogReplacesMovieAndSeriesWithOneVodDestination() {
+    fun unifiedCatalogKeepsMovieAndSeriesDestinations() {
         val result = buildDestinationItems(
             configured = listOf(
                 AppTopLevelDestination.HOME,
@@ -54,7 +52,7 @@ class AppShellNavigationTest {
         )
 
         assertThat(result.map { it.route })
-            .containsExactly(Routes.HOME, Routes.VOD)
+            .containsExactly(Routes.HOME, Routes.MOVIES, Routes.SERIES)
             .inOrder()
     }
 }

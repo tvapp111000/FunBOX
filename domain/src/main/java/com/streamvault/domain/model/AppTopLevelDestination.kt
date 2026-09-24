@@ -9,11 +9,12 @@ enum class AppTopLevelDestination(
     LIVE_TV("live_tv", AppLandingDestination.LIVE_TV),
     MOVIES("movies", AppLandingDestination.MOVIES),
     SERIES("series", AppLandingDestination.SERIES),
+    FAVORITES("favorites"),
     DOWNLOADS("downloads", AppLandingDestination.DOWNLOADS),
     GUIDE("guide", AppLandingDestination.GUIDE),
     SEARCH("search"),
     PLUGINS("plugins", AppLandingDestination.PLUGINS),
-    SETTINGS("settings", AppLandingDestination.SETTINGS, isRequired = true);
+    SETTINGS("settings", AppLandingDestination.SETTINGS);
 
     companion object {
         val defaultOrder: List<AppTopLevelDestination> = listOf(
@@ -21,11 +22,9 @@ enum class AppTopLevelDestination(
             LIVE_TV,
             MOVIES,
             SERIES,
-            DOWNLOADS,
+            FAVORITES,
             GUIDE,
-            SEARCH,
-            PLUGINS,
-            SETTINGS
+            SEARCH
         )
 
         fun fromStorage(value: String?): AppTopLevelDestination? =
@@ -34,7 +33,6 @@ enum class AppTopLevelDestination(
         fun normalizeForStorage(destinations: List<AppTopLevelDestination>): List<AppTopLevelDestination> {
             val unique = linkedSetOf<AppTopLevelDestination>()
             destinations.forEach(unique::add)
-            unique += SETTINGS
             return unique.toList()
         }
 

@@ -9,6 +9,7 @@ import com.streamvault.core.navigation.AppDestination
 import com.streamvault.core.navigation.NavigationActions
 import com.streamvault.core.navigation.NavigationOptions
 import com.streamvault.domain.model.Channel
+import com.streamvault.domain.model.ContentType
 import com.streamvault.domain.model.Episode
 import com.streamvault.domain.model.Movie
 import com.streamvault.domain.model.PlaybackHistory
@@ -18,6 +19,7 @@ import com.streamvault.feature.catalog.api.CatalogDashboardShelfCustomizationCon
 import com.streamvault.feature.catalog.api.CatalogPlatformHost
 import com.streamvault.feature.catalog.api.CatalogScaffoldContent
 import com.streamvault.feature.catalog.presentation.dashboard.DashboardScreen
+import com.streamvault.feature.catalog.presentation.favorites.FavoritesScreen
 import com.streamvault.feature.catalog.presentation.movies.MovieDetailScreen
 import com.streamvault.feature.catalog.presentation.movies.MoviesScreen
 import com.streamvault.feature.catalog.presentation.search.SearchScreen
@@ -78,6 +80,43 @@ fun NavGraphBuilder.registerCatalogGraph(
             onPlaybackHistoryClick = { history -> onPlayHistory(history, AppDestination.Home) },
             scaffold = scaffold,
             dashboardShelfCustomizationContent = dashboardShelfCustomizationContent,
+        )
+    }
+
+    composable(CatalogRoutePatterns.FAVORITES) {
+        FavoritesScreen(
+            onItemClick = { item ->
+                when (item.favorite.contentType) {
+                    ContentType.LIVE -> onPlayChannel(
+                        Channel(
+                            id = item.favorite.contentId,
+                            name = item.title,
+                            providerId = item.providerId,
+                            streamUrl = item.streamUrl,
+                            categoryId = item.categoryId,
+                            epgChannelId = item.epgChannelId,
+                        ),
+                        CatalogChannelPlaybackContext(
+                            categoryId = item.launchCategoryId ?: item.categoryId,
+                            providerId = item.providerId,
+                            isVirtual = item.launchIsVirtual,
+                            combinedProfileId = null,
+                            returnDestination = AppDestination.Favorites,
+                        )
+                    )
+                    ContentType.MOVIE -> actions.navigate(
+                        AppDestination.MovieDetail(item.favorite.contentId, AppDestination.Favorites)
+                    )
+                    ContentType.SERIES -> actions.navigate(
+                        AppDestination.SeriesDetail(item.favorite.contentId, AppDestination.Favorites)
+                    )
+                    else -> Unit
+                }
+            },
+            onHistoryClick = { item -> onPlayHistory(item.history, AppDestination.Favorites) },
+            currentDestination = AppDestination.Favorites,
+            onDestinationRequested = onTopLevelDestinationRequested,
+            scaffold = scaffold,
         )
     }
 
@@ -223,6 +262,7 @@ private fun decodeCatalogReturnDestination(route: String): AppDestination? {
         CatalogRoutePatterns.HOME -> AppDestination.Home
         CatalogRoutePatterns.MOVIES -> AppDestination.Movies
         CatalogRoutePatterns.SERIES -> AppDestination.Series
+        CatalogRoutePatterns.FAVORITES -> AppDestination.Favorites
         CatalogRoutePatterns.VOD -> AppDestination.Vod
         CatalogRoutePatterns.SEARCH -> AppDestination.Search(
             route.substringAfter("query=", "").takeIf(String::isNotBlank)

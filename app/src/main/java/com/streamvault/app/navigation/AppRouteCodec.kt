@@ -17,6 +17,7 @@ internal object AppRoutePatterns {
     const val LIVE_TV_DESTINATION = LiveRoutePatterns.LIVE_TV_DESTINATION
     const val MOVIES = CatalogRoutePatterns.MOVIES
     const val SERIES = CatalogRoutePatterns.SERIES
+    const val FAVORITES = CatalogRoutePatterns.FAVORITES
     const val VOD = CatalogRoutePatterns.VOD
     const val DOWNLOADS = SystemRoutePatterns.DOWNLOADS
     const val EPG = LiveRoutePatterns.EPG
@@ -43,6 +44,7 @@ internal object AppRouteCodec {
         } ?: AppRoutePatterns.LIVE_TV
         AppDestination.Movies -> AppRoutePatterns.MOVIES
         AppDestination.Series -> AppRoutePatterns.SERIES
+        AppDestination.Favorites -> AppRoutePatterns.FAVORITES
         AppDestination.Vod -> AppRoutePatterns.VOD
         AppDestination.Downloads -> AppRoutePatterns.DOWNLOADS
         is AppDestination.Guide -> {
@@ -96,6 +98,7 @@ internal object AppRouteCodec {
             }
             path == AppRoutePatterns.MOVIES -> AppDestination.Movies
             path == AppRoutePatterns.SERIES -> AppDestination.Series
+            path == AppRoutePatterns.FAVORITES -> AppDestination.Favorites
             path == AppRoutePatterns.VOD -> AppDestination.Vod
             path == AppRoutePatterns.DOWNLOADS -> AppDestination.Downloads
             path == AppRoutePatterns.EPG -> decodeGuide(query)
@@ -125,6 +128,7 @@ internal object AppRouteCodec {
     fun decodeLegacyExternalRoute(route: String): AppDestination? = decode(route)?.let { destination ->
         when (destination) {
             AppDestination.Home,
+            AppDestination.Favorites,
             AppDestination.Plugins,
             is AppDestination.ProviderSetup,
             is AppDestination.MovieDetail,
@@ -182,6 +186,7 @@ internal object Routes {
     const val LIVE_TV_DESTINATION = AppRoutePatterns.LIVE_TV_DESTINATION
     const val MOVIES = AppRoutePatterns.MOVIES
     const val SERIES = AppRoutePatterns.SERIES
+    const val FAVORITES = AppRoutePatterns.FAVORITES
     const val VOD = AppRoutePatterns.VOD
     const val DOWNLOADS = AppRoutePatterns.DOWNLOADS
     const val EPG = AppRoutePatterns.EPG

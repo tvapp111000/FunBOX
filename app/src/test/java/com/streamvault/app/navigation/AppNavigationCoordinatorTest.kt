@@ -177,7 +177,7 @@ class AppNavigationCoordinatorTest {
         val command = coordinator.pendingCommand.value?.command
         assertThat(command).isInstanceOf(com.streamvault.core.navigation.NavigationCommand.Navigate::class.java)
         assertThat((command as com.streamvault.core.navigation.NavigationCommand.Navigate).destination)
-            .isEqualTo(AppDestination.Vod)
+            .isEqualTo(AppDestination.Movies)
     }
 
     private fun coordinator(

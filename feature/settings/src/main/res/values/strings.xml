@@ -435,6 +435,7 @@
     <string name="nav_movies">Movies</string>
     <string name="nav_vod">VOD</string>
     <string name="nav_series">Series</string>
+    <string name="nav_favorites">Favorites</string>
     <string name="settings_category_mode_protection">Lock / Unlock</string>
     <string name="settings_category_mode_visibility">Hide / Unhide</string>
     <string name="settings_category_protection_summary_title">Lock changes are reviewed before they go live</string>
