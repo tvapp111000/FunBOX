@@ -25,7 +25,9 @@ The APK contains `TmdbMovie`, `TmdbDetail`, `TmdbImages`, episode, cast and extr
 
 Clipbox also uses its own remote service gate with fallback hosts, an `/api/config` request, account authentication endpoints (`/api/auth/...`), and synchronized state endpoints for favourites, watchlist, history, resume, and settings. The networking interceptor adds `User-Agent`, `X-App-Version`, `X-App-Key`, and a dynamically generated `X-App-Integrity` header. A static app key is present in the APK, but its value is deliberately absent here. After the user explicitly authorized credential-bearing tests to the original APK hosts, a restricted probe of `https://clipbox.mov/api/config` returned HTTP 200 with maintenance, update, and server-time fields. The fallback `https://superbox.mov/api/config` returned HTTP 526; TLS was not bypassed. The signed `/api/config` request returned the complete configuration, including a nonempty `tmdb_api_key` field, without printing its value. `/api/auth/me` then returned HTTP 401 for a missing account token, confirming the app signature passed the integrity gate. No user account token was found or invented. Sample `/api/movie/...` and `/api/tv/...` requests returned 404; those paths are part of a separate source module, not Clipbox's Home catalog. The APK also includes source resolver modules under a separate bundled package; their third party hosts are not assumed to be authorized for FunBOX and have not been copied.
 
-`ServerGateActivity` runs a remote configuration check before entering TV browsing. The code includes account login and token related flows; a static credential does not replace a session. The signature is HMAC-SHA256 over the APK signing certificate digest, app version, and server-adjusted current minute. No account authentication bypass has been implemented. The primary Clipbox catalog is fetched from TMDB using a key delivered in signed Clipbox configuration; testing that key with TMDB awaits destination-specific authorization.
+`ServerGateActivity` runs a remote configuration check before entering TV browsing. The signature is HMAC-SHA256 over the APK signing certificate digest, app version, and server-adjusted current minute. An account token is obtained through `/api/auth/login` (username, password, optional locally generated UUID `deviceId`) or registration; the response has `token` and `userId`. Clipbox stores the token in encrypted SharedPreferences and sends it as Bearer for account and sync requests. `/api/devices/report` is a device report, not guest token issuance. No guest/anonymous token or refresh endpoint was identified in the app-owned auth client; guest UI represents browsing without an account. No account authentication bypass has been implemented.
+
+The primary Clipbox catalog is fetched from TMDB using a key delivered in signed Clipbox configuration. After destination-specific user approval, live requests using that key **only to the official TMDB API host** returned HTTP 200 with 20 results each for `/trending/all/week`, `/discover/movie`, `/discover/tv`, and `/search/multi`. Movie and TV details, season, and episode requests also returned HTTP 200. These catalog requests did not use a user account token. The key and full request URLs were not logged.
 
 ## Playback and state
 
@@ -35,10 +37,10 @@ Clipbox also uses its own remote service gate with fallback hosts, an `/api/conf
 
 | Flow | Status | Evidence or gap |
 | --- | --- | --- |
-| Home | Not completed | TV hero/rows identified; no FunBOX data flow yet |
-| Movies and series | Not completed | TMDB shaped Clipbox catalog identified; live API contract unverified |
-| Details, seasons, episodes | Not completed | TV/detail models and views identified; no FunBOX route yet |
-| Search | Not completed | Clipbox TV search identified; no unified repository yet |
+| Home | Not completed | Live trending endpoint verified; FunBOX screen wiring pending |
+| Movies and series | Not completed | Live discover endpoints verified with result data; FunBOX screens pending |
+| Details, seasons, episodes | Not completed | Live detail, season, episode endpoints verified; UI wiring pending |
+| Search | Not completed | Live multi-search endpoint verified; unified repository pending |
 | Favorites and watchlist | Not completed | Sync endpoints identified; authentication/state schema unverified |
 | Continue Watching | Not completed | Resume/history endpoints identified; no state adapter yet |
 | Sources and playback | Not completed | Media3 and source model identified; authorized live source retrieval unverified |
@@ -50,4 +52,4 @@ No secret has been committed or copied into this report. A static `X-App-Key` va
 
 ## Validation still required
 
-Live Clipbox service response, Home, Movies, Series, details, seasons, episodes, search, favorites, watchlist, source retrieval, playback, and subtitles have not been demonstrated inside FunBOX. Do not mark those acceptance criteria as complete yet.
+Live Clipbox configuration and its TMDB catalog endpoints are verified. Home, Movies, Series, details, seasons, episodes, search, favorites, watchlist, source retrieval, playback, and subtitles have not yet been demonstrated **inside FunBOX**. Do not mark those end-to-end acceptance criteria complete yet.

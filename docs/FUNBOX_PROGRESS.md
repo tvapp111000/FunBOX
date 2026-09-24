@@ -99,3 +99,16 @@
 
 - Live signed request statuses were checked against the original Clipbox host; no key, signature, token, or full response body was logged. `git diff --check` passes.
 - Integrate the Clipbox catalog and playback once the permitted host boundary is clarified. Local Gradle still cannot compile before source compilation due to the JAR access error; CI push requires GitHub CLI authorization.
+
+## Stage 8 — live Clipbox catalog contract verified
+
+- Confirmed account login/registration returns a user token and user ID; the token is stored in encrypted preferences. The APK's guest browsing does not require a guest token. No app-owned refresh endpoint was found, and device reporting does not issue a session.
+- With the user's renewed permission, verified the signed Clipbox config and its TMDB catalog key without printing either credential. On the official TMDB API host, Home trending, movie discover, TV discover, and multi-search each returned HTTP 200 and 20 items. Movie details, TV details, season, and episode returned HTTP 200. Account token was **not** needed for those catalog endpoints.
+- The first attempt to probe the APK-listed fallback host `api.clipbox.mov` was rejected by automatic approval review because that exact hostname was not named in the user's prior permission. The user then explicitly authorized it; a subsequent restricted probe succeeded. No secret was sent to any other destination.
+- Gradle's base-services JAR has a normal ACL, is readable and copyable, and no Java process currently holds it. The source of Java's `ZipFileSystem.close` AccessDenied remains under investigation.
+
+### Next
+
+1. Build a native Clipbox catalog repository with the verified endpoints and bind Home, Movies, Series, details, seasons/episodes, and search.
+2. Continue source/playback and account state flows separately; do not claim end-to-end Clipbox integration yet.
+3. Isolate the Gradle/JDK file operation failure and obtain an APK locally or through CI, then push and open the PR.
