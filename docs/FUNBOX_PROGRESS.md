@@ -70,3 +70,10 @@
 - Parsed all edited XML resource files and ran `git diff --check` successfully. No emulator check yet.
 - A fresh local `assembleDebug` attempt still stops during Gradle generated-accessor compilation with `AccessDeniedException` when closing a Gradle JAR; no project source has compiled locally.
 - Commit and push the branch to the fork, inspect GitHub Actions, then fix any reported build failures. Continue native Clipbox implementation only against verified authorized endpoints.
+
+## Stage 5 — visible branding and Clipbox authentication boundary
+
+- Changed remaining visible product text in the navigation shell, failure reporting, recording notifications, provider pairing, Cast default title, and plugin installation screens to FunBOX. Internal plugin service names and provider protocol identifiers remain compatible with StreamVault.
+- Further APK inspection confirmed that Clipbox's own catalog uses TMDB data and that its private service requests include an app key plus a dynamic integrity header. Values were not logged or committed.
+- A credential-bearing service probe was automatically rejected because permission to transmit the recovered key to the particular remote hosts was not established. No key was transmitted. Continue the IPTV and UI work while this access requirement remains unresolved.
+- Four local commits exist. The fork exists, but pushing currently needs a GitHub CLI authorization; a narrow user decision is pending.

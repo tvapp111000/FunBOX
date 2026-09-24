@@ -21,7 +21,9 @@ The TV experience uses Android XML layouts and view based activities, with separ
 
 ## Data and network
 
-The APK contains `TmdbMovie`, `TmdbDetail`, `TmdbImages`, episode, cast and extra metadata models. The observed home, detail, and search activities use these models. Clipbox uses its own remote service gate with fallback hosts, an `/api/config` request, account authentication endpoints (`/api/auth/...`), and synchronized state endpoints for favourites, watchlist, history, resume, and settings. The exact request/response contract and authorization lifetime have not yet been validated against the live service. The APK also includes source resolver modules under a separate bundled package; their third party hosts are not assumed to be authorized for FunBOX and have not been copied.
+The APK contains `TmdbMovie`, `TmdbDetail`, `TmdbImages`, episode, cast and extra metadata models. The observed home, detail, and search activities use these models. Static call sites show that Clipbox itself obtains catalog data from TMDB paths including `/trending/all/week`, `/discover/movie`, `/discover/tv`, `/search/multi`, `/movie/`, and `/tv/`. Its TMDB credential is populated from remote configuration; it is not a reusable literal in the catalog class. Recreating the Clipbox catalog must follow its actual filters and presentation rather than substitute an unrelated catalog.
+
+Clipbox also uses its own remote service gate with fallback hosts, an `/api/config` request, account authentication endpoints (`/api/auth/...`), and synchronized state endpoints for favourites, watchlist, history, resume, and settings. The networking interceptor adds `User-Agent`, `X-App-Version`, `X-App-Key`, and a dynamically generated `X-App-Integrity` header. A static app key is present in the APK, but its value is deliberately absent here. Read-only requests without the app credentials received HTTP 403 from both fallback hosts in this environment. A proposed probe that would send the extracted key to those hosts was rejected by automatic approval review because the original authorization did not specify those destinations for credential transmission. No credential-bearing request was made. The exact request/response contract and authorization lifetime therefore remain unvalidated. The APK also includes source resolver modules under a separate bundled package; their third party hosts are not assumed to be authorized for FunBOX and have not been copied.
 
 `ServerGateActivity` runs a remote configuration check before entering TV browsing. The code includes account login and token related flows; a static credential alone cannot be assumed to replace a session. No authentication bypass has been implemented.
 
@@ -44,7 +46,7 @@ The APK contains `TmdbMovie`, `TmdbDetail`, `TmdbImages`, episode, cast and extr
 
 ## Credentials
 
-No secret has been committed or copied into this report. Whether the APK contains a reusable static key, a remotely issued credential, or account bound tokens remains unresolved. Any needed value must be provided through ignored local properties or environment/CI secrets. Temporary or account bound tokens must be obtained through their authorized flow.
+No secret has been committed or copied into this report. A static `X-App-Key` value exists, while the TMDB key is loaded from remote configuration and account sessions have separate endpoints. None is configured in FunBOX yet. Any needed value must be provided through ignored local properties or environment/CI secrets. Temporary or account bound tokens must be obtained through their authorized flow; the dynamic integrity mechanism is not treated as permission to bypass access controls.
 
 ## Validation still required
 

@@ -217,7 +217,7 @@ internal fun PluginsContent(
                     if (uiState.plugins.isEmpty() && !uiState.isLoading) {
                         item {
                             Text(
-                                text = "No compatible StreamVault plugins are installed.",
+                                text = "No compatible FunBOX plugins are installed.",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = AppColors.TextSecondary
                             )
@@ -367,7 +367,7 @@ private fun PluginInstallUrlDialog(
 
     PremiumDialog(
         title = "Install plugin from URL",
-        subtitle = "Enter the direct APK URL. StreamVault will download it and open the installer.",
+        subtitle = "Enter the direct APK URL. FunBOX will download it and open the installer.",
         onDismissRequest = {
             keyboardController?.hide()
             if (!isInstalling) onDismiss()

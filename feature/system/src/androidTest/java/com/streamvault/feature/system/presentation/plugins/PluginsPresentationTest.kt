@@ -51,7 +51,7 @@ class PluginsPresentationTest {
             }
         }
 
-        composeRule.onNodeWithText("No compatible StreamVault plugins are installed.")
+        composeRule.onNodeWithText("No compatible FunBOX plugins are installed.")
             .assertIsDisplayed()
         composeRule.onNode(hasText("Install URL") and hasClickAction())
             .performSemanticsAction(SemanticsActions.OnClick)
