@@ -124,3 +124,10 @@
 
 - The live upstream catalog contract was verified in Stage 8; the new Kotlin layer has only static checks at this checkpoint. `git diff --check` passes.
 - Finish the build, fix compiler errors, run unit tests, then implement unified search and legal source/playback flows. Push and open PR when GitHub authentication is available.
+
+## Stage 10 — build and GitHub access checkpoint
+
+- GitHub CLI device authorization for the user's `tvapp111000` account completed. The branch is still local at this checkpoint; push and PR remain to be done after build fixes.
+- The escalated local Gradle run passed the previous JDK file access failure and reached Android resource linking. AAPT found an invalid literal color in the splash drawable; changed it to a valid shape fill. A new `assembleDebug` run is in progress.
+- Corrected the Clipbox Compose screens' Hilt ViewModel import to the API used by the project. Neither compilation nor an APK has been verified yet.
+- The user explicitly requires a signed, installable debug APK as a final deliverable. Verify the APK contents, signature, and Android TV manifest before reporting completion; install and launch through ADB if a device or emulator is available.
