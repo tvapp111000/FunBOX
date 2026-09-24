@@ -149,6 +149,7 @@ fun NavGraphBuilder.registerCatalogGraph(
             },
             onMovieClick = { movie -> onOpenMovieDetail(movie, AppDestination.Search(query)) },
             onSeriesClick = { series -> onOpenSeriesDetail(series, AppDestination.Search(query)) },
+            onClipboxTitleClick = { title -> openClipboxTitle(title, AppDestination.Search(query)) },
             scaffold = scaffold,
         )
     }

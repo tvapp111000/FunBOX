@@ -131,3 +131,9 @@
 - The escalated local Gradle run passed the previous JDK file access failure and reached Android resource linking. AAPT found an invalid literal color in the splash drawable; changed it to a valid shape fill. A new `assembleDebug` run is in progress.
 - Corrected the Clipbox Compose screens' Hilt ViewModel import to the API used by the project. Neither compilation nor an APK has been verified yet.
 - The user explicitly requires a signed, installable debug APK as a final deliverable. Verify the APK contents, signature, and Android TV manifest before reporting completion; install and launch through ADB if a device or emulator is available.
+
+## Stage 11 — fork PR, APK CI, and unified search
+
+- Pushed `funbox-full-integration` to `tvapp111000/FunBOX` and opened draft PR #1. Added a CI workflow that builds and uploads a signed debug APK. Its first run failed at Android SDK setup because the action requested the removed `tools` package; specifying supported SDK packages fixed setup, and new runs are in progress.
+- Connected global search to the verified Clipbox catalog. IPTV channel matches still come from the active StreamVault provider; movie and series sections now come from Clipbox's signed-config/TMDB catalog and link to the new native detail routes. This code is pending compilation and device validation.
+- Local `assembleDebug` has passed Android resource linking and the previous JDK access failure. No APK exists yet at this checkpoint. ADB is installed but no device is attached and no emulator system image is installed locally.

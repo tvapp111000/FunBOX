@@ -131,7 +131,7 @@ private fun ClipboxHero(title: ClipboxTitle, onTitleClick: (ClipboxTitle) -> Uni
 }
 
 @Composable
-private fun ClipboxPoster(title: ClipboxTitle, onTitleClick: (ClipboxTitle) -> Unit) {
+internal fun ClipboxPoster(title: ClipboxTitle, onTitleClick: (ClipboxTitle) -> Unit) {
     Column(modifier = Modifier.width(150.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
         TvClickableSurface(
             onClick = { onTitleClick(title) },
