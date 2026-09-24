@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">StreamVault</string>
+    <string name="app_name">FunBOX</string>
     <string name="nav_home">בית</string>
-    <string name="nav_live_tv">טלוויזיה בשידור חי</string>
+    <string name="nav_live_tv">טלוויזיה</string>
     <string name="nav_movies">סרטים</string>
-    <string name="nav_series">סדרה</string>
-    <string name="nav_epg">מדריך</string>
+    <string name="nav_series">סדרות</string>
+    <string name="nav_epg">מדריך ערוצים</string>
     <string name="nav_settings">הגדרות</string>
     <string name="welcome_enter_app">היכנס לאפליקציה</string>
     <string name="welcome_manage_providers">נהל ספקים</string>

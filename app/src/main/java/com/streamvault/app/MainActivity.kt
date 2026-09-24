@@ -191,7 +191,7 @@ class MainActivity : ComponentActivity(), CatalogPlatformHost {
             requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         }
         setContent {
-            val appLanguage by preferencesRepository.appLanguage.collectAsState(initial = "system")
+            val appLanguage by preferencesRepository.appLanguage.collectAsState(initial = "he")
             val appTimeFormat by preferencesRepository.appTimeFormat.collectAsState(initial = com.streamvault.domain.model.AppTimeFormat.SYSTEM)
             val appTheme by preferencesRepository.appTheme.collectAsState(initial = AppTheme.DEFAULT)
             val databaseStartupState by databaseStartupCoordinator.state.collectAsState()

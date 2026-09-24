@@ -1637,7 +1637,7 @@ class PreferencesRepository @Inject constructor(
     }
 
     override val appLanguage: Flow<String> = context.dataStore.data.map { preferences ->
-        preferences[PreferencesKeys.APP_LANGUAGE] ?: "system"
+        preferences[PreferencesKeys.APP_LANGUAGE] ?: "he"
     }
 
     override val remoteShortcutPreferences: Flow<RemoteShortcutPreferences> = context.dataStore.data.map { preferences ->
