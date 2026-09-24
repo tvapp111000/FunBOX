@@ -38,6 +38,13 @@ if (localPropertiesFile.exists()) {
 
 fun localProp(key: String): String = localProperties.getProperty(key, "")
 
+val funboxReleaseRepository = providers.gradleProperty("funboxReleaseRepository").orNull
+    ?: localProp("funbox.release.repository")
+require(funboxReleaseRepository.isEmpty() ||
+    Regex("[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+").matches(funboxReleaseRepository)) {
+    "funboxReleaseRepository must be a GitHub owner/repository name"
+}
+
 fun computeOfficialSigningCertSha256(): String {
     if (!keystorePropertiesFile.exists()) return ""
 
@@ -77,6 +84,7 @@ android {
         buildConfigField("String", "OFFICIAL_APPLICATION_ID", "\"com.streamvault.app\"")
         buildConfigField("String", "OFFICIAL_SIGNING_CERT_SHA256", "\"$officialSigningCertSha256\"")
         buildConfigField("String", "APP_UPDATE_CHANNEL", "\"stable\"")
+        buildConfigField("String", "FUNBOX_RELEASE_REPOSITORY", "\"$funboxReleaseRepository\"")
         buildConfigField("long", "BUILD_TIMESTAMP_UTC", "0L")
         ndk {
             abiFilters += listOf("arm64-v8a", "armeabi-v7a")

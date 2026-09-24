@@ -801,7 +801,7 @@ class PreferencesRepository @Inject constructor(
     }
 
     override val autoCheckAppUpdates: Flow<Boolean> = context.dataStore.data.map { preferences ->
-        preferences[PreferencesKeys.AUTO_CHECK_APP_UPDATES] ?: true
+        preferences[PreferencesKeys.AUTO_CHECK_APP_UPDATES] ?: false
     }
 
     override val autoDownloadAppUpdates: Flow<Boolean> = context.dataStore.data.map { preferences ->

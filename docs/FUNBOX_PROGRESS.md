@@ -45,3 +45,15 @@
 1. Resolve or bypass the local Gradle/JDK filesystem issue through an authorized build environment, then compile and fix source errors.
 2. Complete native Clipbox integration after live API and authentication contracts are validated; do not substitute unrelated scraping providers.
 3. Complete unified navigation, favorites, search, settings, player, and RTL focus checks.
+
+## Stage 3 — update channel safety
+
+- Replaced the upstream StreamVault release check with a configurable FunBOX GitHub repository. The repository setting is intentionally blank until a FunBOX release destination exists.
+- Disabled automatic release checks on a fresh installation while no FunBOX release repository is configured.
+- Changed update download labels and filenames to FunBOX, and the Android TV input service label to FunBOX.
+- Added a placeholder in `local.properties.example`; it contains no credential.
+
+### Verification and next steps
+
+- Review of the changed release URL and assets was static. Gradle remains blocked before project compilation by the local Java/JAR access restriction described above.
+- Continue with the requested primary navigation and native Clipbox integration. Set `funbox.release.repository` only after the user identifies the FunBOX repository.

@@ -41,3 +41,5 @@
 #
 # m3u.dev.url=https://iptv-org.github.io/iptv/countries/fr.m3u
 # m3u.dev.name=iptv-org France
+# GitHub owner/repository for FunBOX releases (leave blank until a release repository exists).
+funbox.release.repository=
