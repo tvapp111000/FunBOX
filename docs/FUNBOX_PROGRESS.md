@@ -149,3 +149,9 @@
 - The first local `assembleDebug` compiled the data and feature modules, then failed in `app:compileDebugKotlin` because the shell imported `androidx.compose.ui.unit.size` instead of the layout modifier extension. Fixed the import; CI reported the same source error.
 - A CI run also found configuration-cache incompatibilities in inherited project validation tasks. The FunBOX APK workflow now explicitly runs without Gradle's configuration cache.
 - A new local build is running with the navigation fix and the guest library/search changes. The APK remains pending and must be verified after a successful build.
+
+## Stage 14 — live default playlist check
+
+- Fetched the user-supplied `http://tiny.cc/FanTV` URL with redirects. It returned a valid M3U with 14 channel entries, `tvg-id`, `tvg-logo`, and a `url-tvg` header. The advertised XMLTV URL returned HTTP 200 and about 7.4 MB of guide data.
+- The playlist currently has no `group-title` fields, so it cannot provide source-based categories beyond the default all-channels category. This is a source-data limitation, not a parser claim.
+- Stream playback, guide matching, and on-device first-run behavior are still unverified; ADB has no connected device or installed emulator image.
