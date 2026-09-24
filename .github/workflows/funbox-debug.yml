@@ -1,13 +1,14 @@
 name: FunBOX Debug APK
 
 on:
-  push:
-    branches:
-      - funbox-full-integration
   pull_request:
     branches:
       - master
   workflow_dispatch:
+
+concurrency:
+  group: funbox-debug-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
