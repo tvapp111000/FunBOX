@@ -8,6 +8,7 @@ import com.streamvault.data.remote.clipbox.ClipboxEpisode
 import com.streamvault.data.remote.clipbox.ClipboxMediaType
 import com.streamvault.data.remote.clipbox.ClipboxShelf
 import com.streamvault.data.remote.clipbox.ClipboxTitle
+import com.streamvault.data.remote.clipbox.ClipboxUserStateRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -79,9 +80,19 @@ data class ClipboxDetailState(
 @HiltViewModel
 class ClipboxDetailViewModel @Inject constructor(
     private val repository: ClipboxCatalogRepository,
+    private val userState: ClipboxUserStateRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ClipboxDetailState())
     val state = _state.asStateFlow()
+    val savedItems = userState.items
+
+    fun toggleFavorite() {
+        _state.value.details?.title?.let(userState::toggleFavorite)
+    }
+
+    fun toggleWatchlist() {
+        _state.value.details?.title?.let(userState::toggleWatchlist)
+    }
 
     fun open(id: Long, type: ClipboxMediaType) {
         if (_state.value.details?.title?.id == id && _state.value.details?.title?.type == type) return

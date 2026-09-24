@@ -160,6 +160,8 @@ fun ClipboxDetailScreen(
     BackHandler(onBack = onBack)
     LaunchedEffect(id, type) { viewModel.open(id, type) }
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val savedItems by viewModel.savedItems.collectAsStateWithLifecycle()
+    val saved = savedItems.firstOrNull { it.title.id == id && it.title.type == type }
     val destination = if (type == ClipboxMediaType.MOVIE) AppDestination.MovieDetail(id)
     else AppDestination.SeriesDetail(id)
     scaffold(destination, state.details?.title?.title ?: "פרטים", null, CatalogNavigationChrome.TopBar, true, true, false) {
@@ -184,6 +186,16 @@ fun ClipboxDetailScreen(
                             Text(details.genres.joinToString(" • "))
                             Text(details.title.overview, style = MaterialTheme.typography.bodyLarge)
                             if (details.cast.isNotEmpty()) Text("משתתפים: ${details.cast.joinToString(", ")}")
+                        }
+                    }
+                }
+                item(key = "library_actions") {
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        TvButton(onClick = viewModel::toggleFavorite) {
+                            Text(if (saved?.favorite == true) "★ הסר ממועדפים" else "☆ הוסף למועדפים")
+                        }
+                        TvButton(onClick = viewModel::toggleWatchlist) {
+                            Text(if (saved?.watchlist == true) "✓ הסר מרשימת צפייה" else "+ רשימת צפייה")
                         }
                     }
                 }

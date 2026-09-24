@@ -137,3 +137,9 @@
 - Pushed `funbox-full-integration` to `tvapp111000/FunBOX` and opened draft PR #1. Added a CI workflow that builds and uploads a signed debug APK. Its first run failed at Android SDK setup because the action requested the removed `tools` package; specifying supported SDK packages fixed setup, and new runs are in progress.
 - Connected global search to the verified Clipbox catalog. IPTV channel matches still come from the active StreamVault provider; movie and series sections now come from Clipbox's signed-config/TMDB catalog and link to the new native detail routes. This code is pending compilation and device validation.
 - Local `assembleDebug` has passed Android resource linking and the previous JDK access failure. No APK exists yet at this checkpoint. ADB is installed but no device is attached and no emulator system image is installed locally.
+
+## Stage 12 — Clipbox guest library
+
+- Added local guest favorites and watchlist state for Clipbox titles, with separate flags and private app storage. The native detail screen now offers favorite and watchlist actions, and the existing unified Favorites destination shows saved Clipbox movies, series, and watchlist beside StreamVault saved items.
+- This guest state is deliberately separate from Clipbox account synchronization. No account session was supplied or created, and remote sync behavior is not yet verified. Continue watching and watched episode state remain open.
+- Changes are awaiting an incremental build and UI validation. The first local full build is still finishing other app tasks; no APK is claimed yet.

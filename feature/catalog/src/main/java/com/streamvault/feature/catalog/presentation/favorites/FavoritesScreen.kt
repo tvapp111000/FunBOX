@@ -60,6 +60,10 @@ import androidx.tv.material3.Text
 import com.streamvault.feature.catalog.R
 import com.streamvault.feature.catalog.presentation.components.SelectionChip
 import com.streamvault.feature.catalog.presentation.components.SelectionChipRow
+import com.streamvault.feature.catalog.presentation.components.CategoryRow
+import com.streamvault.feature.catalog.presentation.clipbox.ClipboxPoster
+import com.streamvault.data.remote.clipbox.ClipboxMediaType
+import com.streamvault.data.remote.clipbox.ClipboxTitle
 import com.streamvault.core.ui.components.dialogs.PremiumDialog
 import com.streamvault.core.ui.components.dialogs.PremiumDialogActionButton
 import com.streamvault.core.ui.components.dialogs.PremiumDialogFooterButton
@@ -88,12 +92,17 @@ import com.streamvault.core.ui.accessibility.rememberReducedMotionEnabled
 fun FavoritesScreen(
     onItemClick: (FavoriteUiModel) -> Unit,
     onHistoryClick: (SavedHistoryUiModel) -> Unit,
+    onClipboxTitleClick: (ClipboxTitle) -> Unit,
     currentDestination: AppDestination,
     onDestinationRequested: (AppDestination) -> Unit,
     scaffold: CatalogScaffoldContent,
     viewModel: FavoritesViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val clipboxItems by viewModel.clipboxItems.collectAsStateWithLifecycle()
+    val clipboxMovieFavorites = clipboxItems.filter { it.favorite && it.title.type == ClipboxMediaType.MOVIE }.map { it.title }
+    val clipboxSeriesFavorites = clipboxItems.filter { it.favorite && it.title.type == ClipboxMediaType.SERIES }.map { it.title }
+    val clipboxWatchlist = clipboxItems.filter { it.watchlist }.map { it.title }
     val activeReorderSection = uiState.sections.firstOrNull { it.key == uiState.reorderSectionKey }
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -388,7 +397,7 @@ fun FavoritesScreen(
                     }
                 }
 
-                !hasVisibleContent -> {
+                !hasVisibleContent && clipboxItems.isEmpty() -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
@@ -611,6 +620,27 @@ fun FavoritesScreen(
                                     onCancel = viewModel::cancelReorderMode,
                                     reducedMotionEnabled = reducedMotionEnabled
                                 )
+                            }
+                        }
+                        if (clipboxMovieFavorites.isNotEmpty()) {
+                            item(key = "clipbox_movies") {
+                                CategoryRow("סרטים", clipboxMovieFavorites, keySelector = { it.id }) { title ->
+                                    ClipboxPoster(title, onClipboxTitleClick)
+                                }
+                            }
+                        }
+                        if (clipboxSeriesFavorites.isNotEmpty()) {
+                            item(key = "clipbox_series") {
+                                CategoryRow("סדרות", clipboxSeriesFavorites, keySelector = { it.id }) { title ->
+                                    ClipboxPoster(title, onClipboxTitleClick)
+                                }
+                            }
+                        }
+                        if (clipboxWatchlist.isNotEmpty()) {
+                            item(key = "clipbox_watchlist") {
+                                CategoryRow("רשימת צפייה", clipboxWatchlist, keySelector = { "${it.type}:${it.id}" }) { title ->
+                                    ClipboxPoster(title, onClipboxTitleClick)
+                                }
                             }
                         }
                         }

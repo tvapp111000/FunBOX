@@ -67,6 +67,7 @@ fun NavGraphBuilder.registerCatalogGraph(
 
     composable(CatalogRoutePatterns.FAVORITES) {
         FavoritesScreen(
+            onClipboxTitleClick = { title -> openClipboxTitle(title, AppDestination.Favorites) },
             onItemClick = { item ->
                 when (item.favorite.contentType) {
                     ContentType.LIVE -> onPlayChannel(
