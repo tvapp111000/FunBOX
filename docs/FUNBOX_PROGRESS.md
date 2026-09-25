@@ -178,3 +178,8 @@
 
 - Checked all app and feature `strings.xml` translations. Replaced visible StreamVault product references with FunBOX in 130 resource files, including Hebrew setup, backup, notifications, update UI, and the system app-name string. The original repository URL and `Based on StreamVault` legal credit were deliberately preserved.
 - Resource compilation and a fresh signed APK are required after this change. The Stage 17 APK remains a verified build but does not yet contain these final localization edits.
+
+## Stage 19 — XMLTV freshness check
+
+- Downloaded and decompressed the `url-tvg` XMLTV advertised by the current FanTV playlist. Of 14 playlist `tvg-id` values, 13 match XMLTV channel IDs, with 4,300 programmes for those matches.
+- The newest programme ends on **15 August 2026**, while the current date is 25 September 2026. The feed is stale and contains no current or future programmes. FunBOX still discovers the header URL automatically, but Now/Next cannot show current guide data from this source until the provider refreshes it. This is a source-data limitation; do not mark current EPG playback/Now-Next as verified.
