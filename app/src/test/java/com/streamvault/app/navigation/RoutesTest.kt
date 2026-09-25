@@ -13,15 +13,6 @@ import org.junit.Test
 class RoutesTest {
 
     @Test
-    fun `Clipbox details preserve their own route and return destination`() {
-        val movie = AppDestination.ClipboxMovieDetail(550L, AppDestination.Home)
-        val series = AppDestination.ClipboxSeriesDetail(1399L, AppDestination.Series)
-
-        assertThat(AppRouteCodec.decode(AppRouteCodec.encode(movie))).isEqualTo(movie)
-        assertThat(AppRouteCodec.decode(AppRouteCodec.encode(series))).isEqualTo(series)
-    }
-
-    @Test
     fun `liveTv route supports category deep links`() {
         assertThat(Routes.liveTv()).isEqualTo(Routes.LIVE_TV)
         assertThat(Routes.liveTv(42L)).isEqualTo("${Routes.LIVE_TV}?categoryId=42")

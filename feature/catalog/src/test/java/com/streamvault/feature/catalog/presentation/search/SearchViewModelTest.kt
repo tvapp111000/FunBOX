@@ -2,12 +2,13 @@ package com.streamvault.feature.catalog.presentation.search
 
 import com.google.common.truth.Truth.assertThat
 import com.streamvault.domain.model.Channel
-import com.streamvault.domain.model.Movie
 import com.streamvault.domain.model.LegacyProvider as Provider
 import com.streamvault.domain.model.ProviderType
 import com.streamvault.domain.model.SearchHistoryScope
-import com.streamvault.domain.model.Series
 import com.streamvault.data.preferences.PreferencesRepository
+import com.streamvault.data.remote.clipbox.ClipboxCatalogRepository
+import com.streamvault.data.remote.clipbox.ClipboxMediaType
+import com.streamvault.data.remote.clipbox.ClipboxTitle
 import com.streamvault.domain.manager.ParentalControlManager
 import com.streamvault.domain.manager.RecordingManager
 import com.streamvault.domain.repository.CategoryRepository
@@ -27,6 +28,7 @@ import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -42,6 +44,7 @@ class SearchViewModelTest {
 
     private val providerRepository: ProviderRepository = mock()
     private val searchContent: SearchContent = mock()
+    private val clipboxCatalogRepository: ClipboxCatalogRepository = mock()
     private val preferencesRepository: PreferencesRepository = mock()
     private val parentalControlManager: ParentalControlManager = mock()
     private val favoriteRepository: FavoriteRepository = mock()
@@ -58,11 +61,13 @@ class SearchViewModelTest {
         whenever(preferencesRepository.getRecentSearchQueries(any(), anyOrNull(), any())).thenReturn(flowOf(emptyList()))
         whenever(parentalControlManager.unlockedCategoriesForProvider(any())).thenReturn(flowOf(emptySet()))
         whenever(searchContent.invoke(any(), any(), any(), any())).thenReturn(flowOf(SearchContentResult()))
+        runBlocking { whenever(clipboxCatalogRepository.search(any(), any())).thenReturn(emptyList()) }
         whenever(recordingManager.observeRecordingItems()).thenReturn(flowOf(emptyList()))
 
         viewModel = SearchViewModel(
             providerRepository,
             searchContent,
+            clipboxCatalogRepository,
             preferencesRepository,
             parentalControlManager,
             favoriteRepository,
@@ -117,6 +122,7 @@ class SearchViewModelTest {
         viewModel = SearchViewModel(
             providerRepository,
             searchContent,
+            clipboxCatalogRepository,
             preferencesRepository,
             parentalControlManager,
             favoriteRepository,
@@ -158,6 +164,7 @@ class SearchViewModelTest {
         viewModel = SearchViewModel(
             providerRepository,
             searchContent,
+            clipboxCatalogRepository,
             preferencesRepository,
             parentalControlManager,
             favoriteRepository,
@@ -183,7 +190,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `search results flow through the shared search use case`() = runTest {
+    fun `search combines active IPTV channels with Clipbox movies and series`() = runTest {
         whenever(providerRepository.getActiveProvider()).thenReturn(
             flowOf(
                 Provider(
@@ -198,15 +205,20 @@ class SearchViewModelTest {
             flowOf(
                 SearchContentResult(
                     channels = listOf(Channel(id = 1L, name = "News", streamUrl = "http://stream", providerId = 5L)),
-                    movies = listOf(Movie(id = 2L, name = "Movie")),
-                    series = listOf(Series(id = 3L, name = "Series"))
                 )
+            )
+        )
+        whenever(clipboxCatalogRepository.search(any(), any())).thenReturn(
+            listOf(
+                ClipboxTitle(2L, ClipboxMediaType.MOVIE, "Movie", "", null, null, "", 0.0),
+                ClipboxTitle(3L, ClipboxMediaType.SERIES, "Series", "", null, null, "", 0.0),
             )
         )
 
         viewModel = SearchViewModel(
             providerRepository,
             searchContent,
+            clipboxCatalogRepository,
             preferencesRepository,
             parentalControlManager,
             favoriteRepository,
@@ -221,8 +233,8 @@ class SearchViewModelTest {
         advanceUntilIdle()
 
         assertThat(viewModel.uiState.value.channels.map { it.id }).containsExactly(1L)
-        assertThat(viewModel.uiState.value.movies.map { it.id }).containsExactly(2L)
-        assertThat(viewModel.uiState.value.series.map { it.id }).containsExactly(3L)
+        assertThat(viewModel.uiState.value.clipboxMovies.map { it.id }).containsExactly(2L)
+        assertThat(viewModel.uiState.value.clipboxSeries.map { it.id }).containsExactly(3L)
         assertThat(viewModel.uiState.value.hasSearched).isTrue()
         collectorJob.cancel()
     }

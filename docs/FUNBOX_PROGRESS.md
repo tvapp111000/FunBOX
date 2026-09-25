@@ -153,5 +153,11 @@
 ## Stage 14 — live default playlist check
 
 - Fetched the user-supplied `http://tiny.cc/FanTV` URL with redirects. It returned a valid M3U with 14 channel entries, `tvg-id`, `tvg-logo`, and a `url-tvg` header. The advertised XMLTV URL returned HTTP 200 and about 7.4 MB of guide data.
-- The playlist currently has no `group-title` fields, so it cannot provide source-based categories beyond the default all-channels category. This is a source-data limitation, not a parser claim.
+- The playlist has no inline `group-title` attributes, but **each of its 14 channels has `#EXTGRP:עידן פלוס`**. The existing `M3uParser` applies this standalone directive to the preceding `#EXTINF`, and its tests cover `#EXTGRP`. The group should therefore appear as `עידן פלוס`. The earlier statement that the source had no category was incorrect.
 - Stream playback, guide matching, and on-device first-run behavior are still unverified; ADB has no connected device or installed emulator image.
+
+## Stage 15 — APK build recovery and test repair
+
+- The second local build reached DEX generation but its Gradle JVM crashed from insufficient memory/quota; the drive still has free space. Retrying with one worker, less heap, and no parallel Gradle tasks is the next local recovery step.
+- CI compiled the Android app and reached unit tests. It found that the new search repository constructor was not supplied by four existing tests, and a route test invoked Android `Uri.encode` without Robolectric. Updated the search tests for Clipbox results and moved the route assertion into the existing Robolectric suite.
+- The CI workflow now uploads the signed debug APK immediately after `assembleDebug`, then runs unit tests. This keeps an installable artifact available even if a test reports a separate failure. No artifact has been downloaded or verified at this checkpoint.

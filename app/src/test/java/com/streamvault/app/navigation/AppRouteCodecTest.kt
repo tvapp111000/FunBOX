@@ -10,6 +10,15 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class AppRouteCodecTest {
     @Test
+    fun clipboxDetailsPreserveTheirRouteAndReturnDestination() {
+        val movie = AppDestination.ClipboxMovieDetail(550L, AppDestination.Home)
+        val series = AppDestination.ClipboxSeriesDetail(1399L, AppDestination.Series)
+
+        assertThat(AppRouteCodec.decode(AppRouteCodec.encode(movie))).isEqualTo(movie)
+        assertThat(AppRouteCodec.decode(AppRouteCodec.encode(series))).isEqualTo(series)
+    }
+
+    @Test
     fun typedDestinationsPreserveExistingRoutes() {
         val cases = mapOf(
             AppDestination.Home to "home",
