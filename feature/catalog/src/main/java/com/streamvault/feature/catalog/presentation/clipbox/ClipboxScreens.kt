@@ -41,6 +41,7 @@ import com.streamvault.feature.catalog.api.CatalogScaffoldContent
 fun ClipboxBrowseScreen(
     kind: ClipboxBrowseKind,
     onTitleClick: (ClipboxTitle) -> Unit,
+    onAccountClick: () -> Unit = {},
     scaffold: CatalogScaffoldContent,
     viewModel: ClipboxBrowseViewModel = hiltViewModel(),
 ) {
@@ -64,6 +65,7 @@ fun ClipboxBrowseScreen(
             verticalArrangement = Arrangement.spacedBy(22.dp),
         ) {
             if (kind == ClipboxBrowseKind.HOME) {
+                item(key = "account") { TvButton(onClick = onAccountClick) { Text("חשבון Clipbox") } }
                 val featured = state.shelves.firstOrNull()?.items?.firstOrNull()
                 if (featured != null) item(key = "hero") { ClipboxHero(featured, onTitleClick) }
                 state.shelves.forEachIndexed { index, shelf ->

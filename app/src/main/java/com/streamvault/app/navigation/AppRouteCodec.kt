@@ -33,6 +33,7 @@ internal object AppRoutePatterns {
     const val SERIES_DETAIL = CatalogRoutePatterns.SERIES_DETAIL
     const val CLIPBOX_MOVIE_DETAIL = CatalogRoutePatterns.CLIPBOX_MOVIE_DETAIL
     const val CLIPBOX_SERIES_DETAIL = CatalogRoutePatterns.CLIPBOX_SERIES_DETAIL
+    const val CLIPBOX_ACCOUNT = CatalogRoutePatterns.CLIPBOX_ACCOUNT
     const val PARENTAL_CONTROL_GROUPS = "parental_control_groups/{providerId}"
     const val MULTI_VIEW = PlaybackRoutePatterns.MULTI_VIEW
 }
@@ -83,6 +84,7 @@ internal object AppRouteCodec {
             val returnRoute = destination.returnDestination?.let(::encode).orEmpty()
             "clipbox_series_detail/${destination.seriesId}?returnRoute=${Uri.encode(returnRoute)}"
         }
+        AppDestination.ClipboxAccount -> AppRoutePatterns.CLIPBOX_ACCOUNT
         is AppDestination.ParentalControlGroups ->
             "${AppRoutePatterns.PARENTAL_CONTROL_GROUPS.substringBefore("/{")}/${destination.providerId}"
         AppDestination.Player -> AppRoutePatterns.PLAYER
@@ -115,6 +117,7 @@ internal object AppRouteCodec {
             path == AppRoutePatterns.SETTINGS -> AppDestination.Settings(
                 backupUri = query["backupUri"]?.takeIf(String::isNotBlank)
             )
+            path == AppRoutePatterns.CLIPBOX_ACCOUNT -> AppDestination.ClipboxAccount
             path == AppRoutePatterns.PLUGINS -> AppDestination.Plugins
             path == AppRoutePatterns.PLAYER -> AppDestination.Player
             path == AppRoutePatterns.MULTI_VIEW -> AppDestination.MultiView

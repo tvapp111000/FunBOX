@@ -22,6 +22,7 @@ import com.streamvault.feature.catalog.api.CatalogScaffoldContent
 import com.streamvault.feature.catalog.presentation.clipbox.ClipboxBrowseKind
 import com.streamvault.feature.catalog.presentation.clipbox.ClipboxBrowseScreen
 import com.streamvault.feature.catalog.presentation.clipbox.ClipboxDetailScreen
+import com.streamvault.feature.catalog.presentation.clipbox.ClipboxAccountScreen
 import com.streamvault.feature.catalog.presentation.favorites.FavoritesScreen
 import com.streamvault.feature.catalog.presentation.movies.MovieDetailScreen
 import com.streamvault.feature.catalog.presentation.search.SearchScreen
@@ -61,6 +62,14 @@ fun NavGraphBuilder.registerCatalogGraph(
         ClipboxBrowseScreen(
             kind = ClipboxBrowseKind.HOME,
             onTitleClick = { title -> openClipboxTitle(title, AppDestination.Home) },
+            onAccountClick = { actions.navigate(AppDestination.ClipboxAccount) },
+            scaffold = scaffold,
+        )
+    }
+
+    composable(CatalogRoutePatterns.CLIPBOX_ACCOUNT) {
+        ClipboxAccountScreen(
+            onBack = { actions.returnTo(AppDestination.Home) },
             scaffold = scaffold,
         )
     }

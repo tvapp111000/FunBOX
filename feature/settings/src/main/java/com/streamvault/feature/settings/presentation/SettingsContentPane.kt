@@ -39,6 +39,7 @@ public fun SettingsContentPane(
     onAddProvider: () -> Unit,
     onEditProvider: (Provider) -> Unit,
     onNavigateToParentalControl: (Long) -> Unit,
+    onClipboxAccount: () -> Unit = {},
     onChooseRecordingFolder: () -> Unit,
     onUseUsbRecordingStorage: (() -> Unit)?,
     onCreateBackup: () -> Unit,
@@ -269,6 +270,15 @@ public fun SettingsContentPane(
                                         searchTargetModifier
                                     } else Modifier)
                             }
+                        }
+                    } else if (page == SettingsPage.CLIPBOX_ACCOUNT) {
+                        item {
+                            ClickableSettingsRow(
+                                label = stringResource(R.string.settings_clipbox_account),
+                                value = stringResource(R.string.settings_clipbox_account_description),
+                                onClick = onClipboxAccount,
+                                modifier = directEntryModifier,
+                            )
                         }
                     } else if (dialogState.selectedCategory == 0) {
                         providerSection(
