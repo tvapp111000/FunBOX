@@ -107,11 +107,11 @@
   <string name="dashboard_top_rated_movies">Top Rated Movies</string>
   <string name="dashboard_update_allow_installs" translatable="false">Allow Installs</string>
   <string name="dashboard_update_available">Uudempi sovellusversio on välimuistissa ja valmis tarkistettavaksi Asetuksista.</string>
-  <string name="dashboard_update_install_permission_required" translatable="false">The update is downloaded. Allow installs from StreamVault, then retry installation.</string>
+  <string name="dashboard_update_install_permission_required" translatable="false">The update is downloaded. Allow installs from FunBOX, then retry installation.</string>
   <string name="dashboard_update_install_ready">Uusin päivitys on jo ladattu. Avaa Asetukset asentaaksesi sen.</string>
   <string name="dashboard_update_open_installer">Asenna asetuksista</string>
   <string name="dashboard_update_open_settings">Avaa päivitykset</string>
-  <string name="dashboard_update_title">StreamVault %1$s on saatavilla</string>
+  <string name="dashboard_update_title">FunBOX %1$s on saatavilla</string>
   <string name="dashboard_updated_series">Päivitetty sarjahylly</string>
   <string name="dashboard_updated_series_badge">Päivitetty sarja</string>
   <string name="dashboard_warning_review">Avaa Palveluntarjoajan tiedot</string>

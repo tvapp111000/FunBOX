@@ -14,9 +14,6 @@ import java.net.URI
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val GITHUB_RELEASES_LATEST_URL = "https://api.github.com/repos/Davidona/StreamVault-IPTV/releases/latest"
-private const val GITHUB_RELEASES_LIST_URL = "https://api.github.com/repos/Davidona/StreamVault-IPTV/releases?per_page=20"
-
 data class GitHubReleaseInfo(
     val versionName: String,
     val versionCode: Int?,
@@ -38,11 +35,15 @@ class GitHubReleaseChecker @Inject constructor(
 
     suspend fun fetchLatestRelease(): Result<GitHubReleaseInfo> = withContext(Dispatchers.IO) {
         try {
+            val repository = BuildConfig.FUNBOX_RELEASE_REPOSITORY
+            if (repository.isBlank()) {
+                return@withContext Result.error("FunBOX release repository is not configured")
+            }
             val updateChannel = AppUpdateChannel.fromCurrentBuild()
             val request = Request.Builder()
-                .url(updateChannel.releaseApiUrl)
+                .url("https://api.github.com/repos/$repository/releases${updateChannel.releaseApiPath}")
                 .header("Accept", "application/vnd.github+json")
-                .header("User-Agent", "StreamVault-Update-Checker")
+                .header("User-Agent", "FunBOX-Update-Checker")
                 .build()
 
             okHttpClient.newCall(request).execute().use { response ->
@@ -163,7 +164,7 @@ class GitHubReleaseChecker @Inject constructor(
             )
             when (updateChannel) {
                 AppUpdateChannel.Stable -> {
-                    if (name.equals("StreamVault.apk", ignoreCase = true)) {
+                    if (name.equals("FunBOX.apk", ignoreCase = true)) {
                         return releaseAsset
                     }
                     if (fallback == null &&
@@ -174,7 +175,7 @@ class GitHubReleaseChecker @Inject constructor(
                     }
                 }
                 AppUpdateChannel.Beta -> {
-                    if (name.equals("StreamVault-beta.apk", ignoreCase = true)) {
+                    if (name.equals("FunBOX-beta.apk", ignoreCase = true)) {
                         return releaseAsset
                     }
                     if (fallback == null &&
@@ -230,9 +231,9 @@ private data class ReleaseApkAsset(
     val sha256: String?
 )
 
-enum class AppUpdateChannel(val id: String, val releaseApiUrl: String) {
-    Stable(id = "stable", releaseApiUrl = GITHUB_RELEASES_LATEST_URL),
-    Beta(id = "beta", releaseApiUrl = GITHUB_RELEASES_LIST_URL);
+enum class AppUpdateChannel(val id: String, val releaseApiPath: String) {
+    Stable(id = "stable", releaseApiPath = "/latest"),
+    Beta(id = "beta", releaseApiPath = "?per_page=20");
 
     companion object {
         fun fromCurrentBuild(): AppUpdateChannel {

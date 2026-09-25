@@ -548,7 +548,7 @@ class StreamVaultPluginManager @Inject constructor(
     }
 
     suspend fun rewriteCastUrl(url: String): String? =
-        rewriteCastUrl(CastMediaRequest(url = url, title = "StreamVault"))
+        rewriteCastUrl(CastMediaRequest(url = url, title = "FunBOX"))
 
     private fun applyPlaybackPreparationResponse(
         streamInfo: StreamInfo,
@@ -969,7 +969,7 @@ class StreamVaultPluginManager @Inject constructor(
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             context.startActivity(settingsIntent)
-            return Result.error("Allow installs from StreamVault, then choose the plugin APK again")
+            return Result.error("Allow installs from FunBOX, then choose the plugin APK again")
         }
 
         val apkUri = FileProvider.getUriForFile(

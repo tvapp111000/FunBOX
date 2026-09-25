@@ -107,11 +107,11 @@
   <string name="dashboard_top_rated_movies">Top Rated Movies</string>
   <string name="dashboard_update_allow_installs" translatable="false">Allow Installs</string>
   <string name="dashboard_update_available">Rilis aplikasi yang lebih baru sudah di-cache dan siap ditinjau dari Setelan.</string>
-  <string name="dashboard_update_install_permission_required" translatable="false">The update is downloaded. Allow installs from StreamVault, then retry installation.</string>
+  <string name="dashboard_update_install_permission_required" translatable="false">The update is downloaded. Allow installs from FunBOX, then retry installation.</string>
   <string name="dashboard_update_install_ready">Pembaruan terbaru sudah diunduh. Buka Setelan untuk memasangnya.</string>
   <string name="dashboard_update_open_installer">Pasang dari Setelan</string>
   <string name="dashboard_update_open_settings">Buka Pembaruan</string>
-  <string name="dashboard_update_title">StreamVault %1$s tersedia</string>
+  <string name="dashboard_update_title">FunBOX %1$s tersedia</string>
   <string name="dashboard_updated_series">Rak seri yang diperbarui</string>
   <string name="dashboard_updated_series_badge">Seri yang diperbarui</string>
   <string name="dashboard_warning_review">Buka Detail Penyedia</string>

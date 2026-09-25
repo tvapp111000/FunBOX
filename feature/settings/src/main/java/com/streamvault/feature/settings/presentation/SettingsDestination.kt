@@ -48,6 +48,7 @@ enum class SettingsPage(val categoryId: Int, val title: Int, val description: In
     VOD_LIBRARY(8, R.string.settings_page_vod_library, R.string.settings_page_vod_library_description),
     VOD_ORGANIZATION(8, R.string.settings_page_vod_organization, R.string.settings_page_vod_organization_description),
     VOD_PLAYBACK(8, R.string.settings_page_vod_playback, R.string.settings_page_vod_playback_description),
+    CLIPBOX_ACCOUNT(8, R.string.settings_clipbox_account, R.string.settings_clipbox_account_description),
     APPEARANCE(9, R.string.settings_page_appearance, R.string.settings_page_appearance_description),
     HOME(9, R.string.settings_page_home, R.string.settings_page_home_description),
     REMOTE(9, R.string.settings_remote_shortcuts_title, R.string.settings_page_remote_description);

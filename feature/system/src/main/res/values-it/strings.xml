@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">StreamVault</string>
+  <string name="app_name">FunBOX</string>
   <string name="welcome_setup_provider">Fornitore di installazione</string>
   <string name="welcome_loading_title">Preparare la tua libreria</string>
   <string name="sync_section_live">Live</string>

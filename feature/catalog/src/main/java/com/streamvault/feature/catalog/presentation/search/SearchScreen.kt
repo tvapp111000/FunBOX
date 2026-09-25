@@ -67,7 +67,12 @@ import com.streamvault.domain.repository.CategoryRepository
 import com.streamvault.domain.repository.FavoriteRepository
 import com.streamvault.domain.repository.ProviderRepository
 import com.streamvault.domain.usecase.SearchContent
+import com.streamvault.domain.usecase.SearchContentResult
 import com.streamvault.domain.usecase.SearchContentScope
+import com.streamvault.data.remote.clipbox.ClipboxCatalogRepository
+import com.streamvault.data.remote.clipbox.ClipboxMediaType
+import com.streamvault.data.remote.clipbox.ClipboxTitle
+import com.streamvault.feature.catalog.presentation.clipbox.ClipboxPoster
 import com.streamvault.domain.manager.RecordingManager
 import com.streamvault.domain.model.RecordingStatus
 import com.streamvault.domain.util.AdultContentVisibilityPolicy
@@ -85,6 +90,7 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val providerRepository: ProviderRepository,
     private val searchContent: SearchContent,
+    private val clipboxCatalogRepository: ClipboxCatalogRepository,
     private val preferencesRepository: com.streamvault.data.preferences.PreferencesRepository,
     private val parentalControlManager: ParentalControlManager,
     private val favoriteRepository: FavoriteRepository,
@@ -165,7 +171,7 @@ class SearchViewModel @Inject constructor(
         val unlockedIds = params.unlockedCategoryIds
 
         val trimmedQueryLength = query.trim().length
-        if (provider == null || trimmedQueryLength < 2) {
+        if (trimmedQueryLength < 2) {
             flowOf(
                 SearchUiState(
                     parentalControlLevel = level,
@@ -175,30 +181,37 @@ class SearchViewModel @Inject constructor(
                 )
             )
         } else {
-            searchContent(
-                providerId = provider.id,
-                query = query,
-                scope = tab.toSearchScope(),
-                maxResultsPerSection = MAX_RESULTS_PER_SECTION
-            ).map { results ->
+            val channelResults = if (provider == null || tab == SearchTab.MOVIES || tab == SearchTab.SERIES) {
+                flowOf(SearchContentResult())
+            } else {
+                searchContent(
+                    providerId = provider.id,
+                    query = query,
+                    scope = SearchContentScope.LIVE,
+                    maxResultsPerSection = MAX_RESULTS_PER_SECTION
+                )
+            }
+            val clipboxResults = if (tab == SearchTab.LIVE) {
+                flowOf(emptyList<ClipboxTitle>() to false)
+            } else {
+                flow { emit(clipboxCatalogRepository.search(query) to false) }
+                    .catch { emit(emptyList<ClipboxTitle>() to true) }
+            }
+            combine(channelResults, clipboxResults) { results, (titles, clipboxError) ->
                 val filterAdult = !AdultContentVisibilityPolicy.showInAggregatedSurfaces(level)
                 SearchUiState(
                     channels = if (filterAdult)
                         results.channels.filterNot { it.isAdult || it.isUserProtected }
                     else results.channels,
-                    movies = if (filterAdult)
-                        results.movies.filterNot { it.isAdult || it.isUserProtected }
-                    else results.movies,
-                    series = if (filterAdult)
-                        results.series.filterNot { it.isAdult || it.isUserProtected }
-                    else results.series,
+                    clipboxMovies = titles.filter { it.type == ClipboxMediaType.MOVIE && tab != SearchTab.SERIES },
+                    clipboxSeries = titles.filter { it.type == ClipboxMediaType.SERIES && tab != SearchTab.MOVIES },
                     isLoading = false,
                     hasSearched = true,
-                    hasSearchError = results.isPartialResult &&
-                        results.catalogCompleteness == CatalogCompleteness.COMPLETE,
+                    hasSearchError = clipboxError || (results.isPartialResult &&
+                        results.catalogCompleteness == CatalogCompleteness.COMPLETE),
                     catalogCompleteness = results.catalogCompleteness,
                     parentalControlLevel = level,
-                    hasActiveProvider = true,
+                    hasActiveProvider = provider != null,
                     queryLength = trimmedQueryLength,
                     unlockedCategoryIds = unlockedIds
                 )
@@ -208,7 +221,7 @@ class SearchViewModel @Inject constructor(
                         isLoading = true,
                         hasSearched = true,
                         parentalControlLevel = level,
-                        hasActiveProvider = true,
+                        hasActiveProvider = provider != null,
                         queryLength = trimmedQueryLength,
                         unlockedCategoryIds = unlockedIds
                     )
@@ -349,6 +362,8 @@ data class SearchUiState(
     val channels: List<Channel> = emptyList(),
     val movies: List<Movie> = emptyList(),
     val series: List<Series> = emptyList(),
+    val clipboxMovies: List<ClipboxTitle> = emptyList(),
+    val clipboxSeries: List<ClipboxTitle> = emptyList(),
     val isLoading: Boolean = false,
     val hasSearched: Boolean = false,
     val hasSearchError: Boolean = false,
@@ -358,8 +373,10 @@ data class SearchUiState(
     val unlockedCategoryIds: Set<Long> = emptySet(),
     val catalogCompleteness: CatalogCompleteness = CatalogCompleteness.COMPLETE
 ) {
-    val isEmpty: Boolean get() = hasSearched && channels.isEmpty() && movies.isEmpty() && series.isEmpty()
-    val totalResults: Int get() = channels.size + movies.size + series.size
+    val isEmpty: Boolean get() = hasSearched && channels.isEmpty() && movies.isEmpty() && series.isEmpty() &&
+        clipboxMovies.isEmpty() && clipboxSeries.isEmpty()
+    val totalResults: Int get() = channels.size + movies.size + series.size +
+        clipboxMovies.size + clipboxSeries.size
 }
 
 @OptIn(ExperimentalTvMaterial3Api::class)
@@ -369,6 +386,7 @@ fun SearchScreen(
     onChannelClick: (Channel) -> Unit,
     onMovieClick: (Movie) -> Unit,
     onSeriesClick: (Series) -> Unit,
+    onClipboxTitleClick: (ClipboxTitle) -> Unit,
     scaffold: CatalogScaffoldContent,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
@@ -575,7 +593,7 @@ fun SearchScreen(
             }
 
             when {
-                !uiState.hasActiveProvider -> {
+                !uiState.hasActiveProvider && selectedTab == SearchTab.LIVE -> {
                     item {
                         SearchMessageState(
                             title = stringResource(R.string.search_no_provider_title),
@@ -658,6 +676,26 @@ fun SearchScreen(
                                         onLongClick = { showChannelActions(channel) }
                                     )
                                 }
+                            }
+                        }
+
+                        if (uiState.clipboxMovies.isNotEmpty()) {
+                            item {
+                                SearchResultRail(
+                                    title = stringResource(R.string.search_movies),
+                                    items = uiState.clipboxMovies.take(18),
+                                    keySelector = { it.id }
+                                ) { title -> ClipboxPoster(title, onClipboxTitleClick) }
+                            }
+                        }
+
+                        if (uiState.clipboxSeries.isNotEmpty()) {
+                            item {
+                                SearchResultRail(
+                                    title = stringResource(R.string.search_series),
+                                    items = uiState.clipboxSeries.take(18),
+                                    keySelector = { it.id }
+                                ) { title -> ClipboxPoster(title, onClipboxTitleClick) }
                             }
                         }
 
@@ -811,6 +849,15 @@ fun SearchScreen(
                                     },
                                     onSeriesLongClick = { seriesItem -> showSeriesActions(seriesItem) }
                                 )
+                            }
+                        }
+                        if (selectedTab == SearchTab.MOVIES || selectedTab == SearchTab.SERIES) {
+                            val titles = if (selectedTab == SearchTab.MOVIES)
+                                uiState.clipboxMovies else uiState.clipboxSeries
+                            items(titles.chunked(6), key = { row -> row.joinToString("-") { it.id.toString() } }) { row ->
+                                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                    row.forEach { title -> ClipboxPoster(title, onClipboxTitleClick) }
+                                }
                             }
                         }
                     }
@@ -1145,8 +1192,8 @@ private fun SearchResultsSummaryRow(
 ) {
     val countsSummary = listOf(
         stringResource(R.string.search_results_count, stringResource(R.string.search_live_tv), uiState.channels.size),
-        stringResource(R.string.search_results_count, stringResource(R.string.search_movies), uiState.movies.size),
-        stringResource(R.string.search_results_count, stringResource(R.string.search_series), uiState.series.size)
+        stringResource(R.string.search_results_count, stringResource(R.string.search_movies), uiState.clipboxMovies.size),
+        stringResource(R.string.search_results_count, stringResource(R.string.search_series), uiState.clipboxSeries.size)
     ).joinToString("  •  ")
     Column(
         modifier = Modifier

@@ -8,6 +8,7 @@ sealed interface AppDestination : Serializable {
     data class LiveTv(val categoryId: Long? = null) : AppDestination
     data object Movies : AppDestination
     data object Series : AppDestination
+    data object Favorites : AppDestination
     data object Vod : AppDestination
     data object Downloads : AppDestination
     data class Guide(
@@ -38,6 +39,15 @@ sealed interface AppDestination : Serializable {
             require(seriesId > 0L) { "seriesId must be positive" }
         }
     }
+    data class ClipboxMovieDetail(
+        val movieId: Long,
+        val returnDestination: AppDestination? = null
+    ) : AppDestination
+    data class ClipboxSeriesDetail(
+        val seriesId: Long,
+        val returnDestination: AppDestination? = null
+    ) : AppDestination
+    data object ClipboxAccount : AppDestination
     data class ParentalControlGroups(val providerId: Long) : AppDestination {
         init {
             require(providerId > 0L) { "providerId must be positive" }

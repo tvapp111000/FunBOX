@@ -123,7 +123,7 @@ class SystemPresentationVariantTest {
             }
         }
 
-        composeRule.onNodeWithText("No compatible StreamVault plugins are installed.")
+        composeRule.onNodeWithText("No compatible FunBOX plugins are installed.")
             .assertIsDisplayed()
         composeRule.onNode(hasText("Refresh") and hasClickAction())
             .assertIsDisplayed()

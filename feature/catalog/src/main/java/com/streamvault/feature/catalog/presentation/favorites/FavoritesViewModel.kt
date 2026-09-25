@@ -25,6 +25,7 @@ import com.streamvault.domain.usecase.ContinueWatchingResult
 import com.streamvault.domain.usecase.ContinueWatchingScope
 import com.streamvault.domain.usecase.GetContinueWatching
 import com.streamvault.data.preferences.PreferencesRepository
+import com.streamvault.data.remote.clipbox.ClipboxUserStateRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -137,8 +138,11 @@ class FavoritesViewModel @Inject constructor(
     private val playbackHistoryRepository: PlaybackHistoryRepository,
     private val providerRepository: ProviderRepository,
     private val preferencesRepository: PreferencesRepository,
-    private val getContinueWatching: GetContinueWatching
+    private val getContinueWatching: GetContinueWatching,
+    clipboxUserStateRepository: ClipboxUserStateRepository,
 ) : ViewModel() {
+
+    val clipboxItems = clipboxUserStateRepository.items
 
     private val _uiState = MutableStateFlow(FavoritesUiState())
     val uiState: StateFlow<FavoritesUiState> = _uiState.asStateFlow()

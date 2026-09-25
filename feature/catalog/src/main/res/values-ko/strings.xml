@@ -107,11 +107,11 @@
   <string name="dashboard_top_rated_movies">Top Rated Movies</string>
   <string name="dashboard_update_allow_installs" translatable="false">Allow Installs</string>
   <string name="dashboard_update_available">새 앱 릴리스가 캐시되었으며 설정에서 확인할 수 있습니다.</string>
-  <string name="dashboard_update_install_permission_required" translatable="false">The update is downloaded. Allow installs from StreamVault, then retry installation.</string>
+  <string name="dashboard_update_install_permission_required" translatable="false">The update is downloaded. Allow installs from FunBOX, then retry installation.</string>
   <string name="dashboard_update_install_ready">최신 업데이트가 이미 다운로드되었습니다. 설정을 열어 설치하세요.</string>
   <string name="dashboard_update_open_installer">설정에서 설치</string>
   <string name="dashboard_update_open_settings">업데이트 열기</string>
-  <string name="dashboard_update_title">StreamVault %1$s 사용 가능</string>
+  <string name="dashboard_update_title">FunBOX %1$s 사용 가능</string>
   <string name="dashboard_updated_series">업데이트된 시리즈 섹션</string>
   <string name="dashboard_updated_series_badge">업데이트된 시리즈</string>
   <string name="dashboard_warning_review">공급자 상세 열기</string>

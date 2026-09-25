@@ -543,6 +543,7 @@ public fun LazyListScope.settingsAboutSection(
 
     if (page == null || page == SettingsPage.APP_INFO) item {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            SettingsRow(label = "FunBOX", value = stringResource(R.string.settings_based_on_streamvault))
             SettingsRow(label = stringResource(R.string.settings_build), value = stringResource(R.string.settings_build_desc))
             SettingsRow(label = stringResource(R.string.settings_build_verification), value = buildVerificationLabel)
             SettingsRow(label = stringResource(R.string.settings_developed_by), value = stringResource(R.string.settings_developer_name))

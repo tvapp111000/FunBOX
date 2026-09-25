@@ -107,11 +107,11 @@
   <string name="dashboard_top_rated_movies">Top Rated Movies</string>
   <string name="dashboard_update_allow_installs" translatable="false">Allow Installs</string>
   <string name="dashboard_update_available">Daha yeni bir uygulama sürümü önbelleğe alındı ve Ayarlar\'dan incelemeye hazır.</string>
-  <string name="dashboard_update_install_permission_required" translatable="false">The update is downloaded. Allow installs from StreamVault, then retry installation.</string>
+  <string name="dashboard_update_install_permission_required" translatable="false">The update is downloaded. Allow installs from FunBOX, then retry installation.</string>
   <string name="dashboard_update_install_ready">En son güncelleme zaten indirildi. Yüklemek için Ayarlar\'ı açın.</string>
   <string name="dashboard_update_open_installer">Ayarlar\'dan Yükle</string>
   <string name="dashboard_update_open_settings">Güncellemeleri Aç</string>
-  <string name="dashboard_update_title">StreamVault %1$s kullanılabilir</string>
+  <string name="dashboard_update_title">FunBOX %1$s kullanılabilir</string>
   <string name="dashboard_updated_series">Güncellenmiş dizi rafı</string>
   <string name="dashboard_updated_series_badge">Güncellenen dizi</string>
   <string name="dashboard_warning_review">Sağlayıcı Ayrıntılarını Aç</string>

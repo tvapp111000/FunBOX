@@ -153,6 +153,9 @@ internal fun AppNavHost(
                             NavigationOptions(launchSingleTop = true)
                         )
                     },
+                    onClipboxAccount = dropUnlessResumed {
+                        actions.navigate(AppDestination.ClipboxAccount)
+                    },
                     initialBackupImportUri = backupUri,
                     onCloseApp = onCloseApp
                 )

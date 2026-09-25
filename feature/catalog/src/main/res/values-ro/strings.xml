@@ -107,11 +107,11 @@
   <string name="dashboard_top_rated_movies">Top Rated Movies</string>
   <string name="dashboard_update_allow_installs" translatable="false">Allow Installs</string>
   <string name="dashboard_update_available">O versiune mai nouă a aplicației este memorată în cache și gata de verificat din Setări.</string>
-  <string name="dashboard_update_install_permission_required" translatable="false">The update is downloaded. Allow installs from StreamVault, then retry installation.</string>
+  <string name="dashboard_update_install_permission_required" translatable="false">The update is downloaded. Allow installs from FunBOX, then retry installation.</string>
   <string name="dashboard_update_install_ready">Cea mai recentă actualizare a fost deja descărcată. Deschide Setări pentru a o instala.</string>
   <string name="dashboard_update_open_installer">Instalează din Setări</string>
   <string name="dashboard_update_open_settings">Deschide actualizările</string>
-  <string name="dashboard_update_title">StreamVault %1$s este disponibil</string>
+  <string name="dashboard_update_title">FunBOX %1$s este disponibil</string>
   <string name="dashboard_updated_series">Raft de serie actualizat</string>
   <string name="dashboard_updated_series_badge">Seria actualizată</string>
   <string name="dashboard_warning_review">Deschideți detaliile furnizorului</string>

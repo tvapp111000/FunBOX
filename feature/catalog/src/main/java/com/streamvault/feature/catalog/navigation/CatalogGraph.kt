@@ -7,8 +7,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.streamvault.core.navigation.AppDestination
 import com.streamvault.core.navigation.NavigationActions
-import com.streamvault.core.navigation.NavigationOptions
 import com.streamvault.domain.model.Channel
+import com.streamvault.domain.model.ContentType
+import com.streamvault.data.remote.clipbox.ClipboxMediaType
+import com.streamvault.data.remote.clipbox.ClipboxTitle
 import com.streamvault.domain.model.Episode
 import com.streamvault.domain.model.Movie
 import com.streamvault.domain.model.PlaybackHistory
@@ -17,12 +19,14 @@ import com.streamvault.feature.catalog.api.CatalogChannelPlaybackContext
 import com.streamvault.feature.catalog.api.CatalogDashboardShelfCustomizationContent
 import com.streamvault.feature.catalog.api.CatalogPlatformHost
 import com.streamvault.feature.catalog.api.CatalogScaffoldContent
-import com.streamvault.feature.catalog.presentation.dashboard.DashboardScreen
+import com.streamvault.feature.catalog.presentation.clipbox.ClipboxBrowseKind
+import com.streamvault.feature.catalog.presentation.clipbox.ClipboxBrowseScreen
+import com.streamvault.feature.catalog.presentation.clipbox.ClipboxDetailScreen
+import com.streamvault.feature.catalog.presentation.clipbox.ClipboxAccountScreen
+import com.streamvault.feature.catalog.presentation.favorites.FavoritesScreen
 import com.streamvault.feature.catalog.presentation.movies.MovieDetailScreen
-import com.streamvault.feature.catalog.presentation.movies.MoviesScreen
 import com.streamvault.feature.catalog.presentation.search.SearchScreen
 import com.streamvault.feature.catalog.presentation.series.SeriesDetailScreen
-import com.streamvault.feature.catalog.presentation.series.SeriesScreen
 import com.streamvault.feature.catalog.presentation.vod.VodScreen
 
 /**
@@ -45,59 +49,81 @@ fun NavGraphBuilder.registerCatalogGraph(
     consumeSeriesPresentationHint: (NavBackStackEntry) -> Unit,
     decodeDestination: (String) -> AppDestination? = ::decodeCatalogReturnDestination,
 ) {
+    fun openClipboxTitle(title: ClipboxTitle, returnDestination: AppDestination) {
+        val destination = if (title.type == ClipboxMediaType.MOVIE) {
+            AppDestination.ClipboxMovieDetail(title.id, returnDestination)
+        } else {
+            AppDestination.ClipboxSeriesDetail(title.id, returnDestination)
+        }
+        actions.navigate(destination)
+    }
+
     composable(CatalogRoutePatterns.HOME) {
-        DashboardScreen(
-            onDestinationRequested = onTopLevelDestinationRequested,
-            onAddProvider = { actions.navigate(AppDestination.ProviderSetup()) },
-            onRecentChannelClick = { channel, combinedProfileId ->
-                onPlayChannel(
-                    channel,
-                    CatalogChannelPlaybackContext(
-                        categoryId = com.streamvault.domain.model.VirtualCategoryIds.RECENT,
-                        providerId = channel.providerId,
-                        isVirtual = true,
-                        combinedProfileId = combinedProfileId,
-                        returnDestination = AppDestination.Home,
-                    )
-                )
-            },
-            onFavoriteChannelClick = { channel, combinedProfileId ->
-                onPlayChannel(
-                    channel,
-                    CatalogChannelPlaybackContext(
-                        categoryId = com.streamvault.domain.model.VirtualCategoryIds.FAVORITES,
-                        providerId = channel.providerId,
-                        isVirtual = true,
-                        combinedProfileId = combinedProfileId,
-                        returnDestination = AppDestination.Home,
-                    )
-                )
-            },
-            onMovieClick = { movie -> onOpenMovieDetail(movie, AppDestination.Home) },
-            onSeriesClick = { series -> onOpenSeriesDetail(series, AppDestination.Home) },
-            onPlaybackHistoryClick = { history -> onPlayHistory(history, AppDestination.Home) },
+        ClipboxBrowseScreen(
+            kind = ClipboxBrowseKind.HOME,
+            onTitleClick = { title -> openClipboxTitle(title, AppDestination.Home) },
+            onAccountClick = { actions.navigate(AppDestination.ClipboxAccount) },
             scaffold = scaffold,
-            dashboardShelfCustomizationContent = dashboardShelfCustomizationContent,
+        )
+    }
+
+    composable(CatalogRoutePatterns.CLIPBOX_ACCOUNT) {
+        ClipboxAccountScreen(
+            onBack = { actions.returnTo(AppDestination.Home) },
+            scaffold = scaffold,
+        )
+    }
+
+    composable(CatalogRoutePatterns.FAVORITES) {
+        FavoritesScreen(
+            onClipboxTitleClick = { title -> openClipboxTitle(title, AppDestination.Favorites) },
+            onItemClick = { item ->
+                when (item.favorite.contentType) {
+                    ContentType.LIVE -> onPlayChannel(
+                        Channel(
+                            id = item.favorite.contentId,
+                            name = item.title,
+                            providerId = item.providerId,
+                            streamUrl = item.streamUrl,
+                            categoryId = item.categoryId,
+                            epgChannelId = item.epgChannelId,
+                        ),
+                        CatalogChannelPlaybackContext(
+                            categoryId = item.launchCategoryId ?: item.categoryId,
+                            providerId = item.providerId,
+                            isVirtual = item.launchIsVirtual,
+                            combinedProfileId = null,
+                            returnDestination = AppDestination.Favorites,
+                        )
+                    )
+                    ContentType.MOVIE -> actions.navigate(
+                        AppDestination.MovieDetail(item.favorite.contentId, AppDestination.Favorites)
+                    )
+                    ContentType.SERIES -> actions.navigate(
+                        AppDestination.SeriesDetail(item.favorite.contentId, AppDestination.Favorites)
+                    )
+                    else -> Unit
+                }
+            },
+            onHistoryClick = { item -> onPlayHistory(item.history, AppDestination.Favorites) },
+            currentDestination = AppDestination.Favorites,
+            onDestinationRequested = onTopLevelDestinationRequested,
+            scaffold = scaffold,
         )
     }
 
     composable(CatalogRoutePatterns.MOVIES) {
-        MoviesScreen(
-            onMovieClick = { movie -> onOpenMovieDetail(movie, AppDestination.Movies) },
-            onContinueWatchingPlay = { history -> onPlayHistory(history, AppDestination.Movies) },
+        ClipboxBrowseScreen(
+            kind = ClipboxBrowseKind.MOVIES,
+            onTitleClick = { title -> openClipboxTitle(title, AppDestination.Movies) },
             scaffold = scaffold,
         )
     }
 
     composable(CatalogRoutePatterns.SERIES) {
-        SeriesScreen(
-            onSeriesClick = { series -> onOpenSeriesDetail(series, AppDestination.Series) },
-            onSeriesIdClick = { seriesId ->
-                actions.navigate(
-                    AppDestination.SeriesDetail(seriesId, AppDestination.Series),
-                    NavigationOptions(launchSingleTop = true)
-                )
-            },
+        ClipboxBrowseScreen(
+            kind = ClipboxBrowseKind.SERIES,
+            onTitleClick = { title -> openClipboxTitle(title, AppDestination.Series) },
             scaffold = scaffold,
         )
     }
@@ -133,6 +159,7 @@ fun NavGraphBuilder.registerCatalogGraph(
             },
             onMovieClick = { movie -> onOpenMovieDetail(movie, AppDestination.Search(query)) },
             onSeriesClick = { series -> onOpenSeriesDetail(series, AppDestination.Search(query)) },
+            onClipboxTitleClick = { title -> openClipboxTitle(title, AppDestination.Search(query)) },
             scaffold = scaffold,
         )
     }
@@ -200,6 +227,42 @@ fun NavGraphBuilder.registerCatalogGraph(
             platformHost = platformHost,
         )
     }
+
+    composable(
+        route = CatalogRoutePatterns.CLIPBOX_MOVIE_DETAIL,
+        arguments = listOf(
+            navArgument("movieId") { type = NavType.LongType },
+            navArgument("returnRoute") { type = NavType.StringType; defaultValue = "" },
+        ),
+    ) { entry ->
+        val id = entry.arguments?.getLong("movieId") ?: -1L
+        val returnDestination = entry.arguments?.getString("returnRoute")
+            ?.takeIf(String::isNotBlank)?.let(decodeDestination)
+        ClipboxDetailScreen(
+            id = id,
+            type = ClipboxMediaType.MOVIE,
+            onBack = { actions.returnTo(returnDestination) },
+            scaffold = scaffold,
+        )
+    }
+
+    composable(
+        route = CatalogRoutePatterns.CLIPBOX_SERIES_DETAIL,
+        arguments = listOf(
+            navArgument("seriesId") { type = NavType.LongType },
+            navArgument("returnRoute") { type = NavType.StringType; defaultValue = "" },
+        ),
+    ) { entry ->
+        val id = entry.arguments?.getLong("seriesId") ?: -1L
+        val returnDestination = entry.arguments?.getString("returnRoute")
+            ?.takeIf(String::isNotBlank)?.let(decodeDestination)
+        ClipboxDetailScreen(
+            id = id,
+            type = ClipboxMediaType.SERIES,
+            onBack = { actions.returnTo(returnDestination) },
+            scaffold = scaffold,
+        )
+    }
 }
 
 internal fun openRelatedMovieDetail(
@@ -223,6 +286,7 @@ private fun decodeCatalogReturnDestination(route: String): AppDestination? {
         CatalogRoutePatterns.HOME -> AppDestination.Home
         CatalogRoutePatterns.MOVIES -> AppDestination.Movies
         CatalogRoutePatterns.SERIES -> AppDestination.Series
+        CatalogRoutePatterns.FAVORITES -> AppDestination.Favorites
         CatalogRoutePatterns.VOD -> AppDestination.Vod
         CatalogRoutePatterns.SEARCH -> AppDestination.Search(
             route.substringAfter("query=", "").takeIf(String::isNotBlank)

@@ -58,6 +58,7 @@ public fun SettingsScreen(
     onAddProvider: () -> Unit = {},
     onEditProvider: (Provider) -> Unit = {},
     onNavigateToParentalControl: (Long) -> Unit = {},
+    onClipboxAccount: () -> Unit = {},
     initialBackupImportUri: String? = null,
     onCloseApp: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel()
@@ -529,6 +530,7 @@ public fun SettingsScreen(
                     onAddProvider = onAddProvider,
                     onEditProvider = onEditProvider,
                     onNavigateToParentalControl = onNavigateToParentalControl,
+                    onClipboxAccount = onClipboxAccount,
                     onChooseRecordingFolder = {
                         try {
                             recordingFolderLauncher.launch(null)

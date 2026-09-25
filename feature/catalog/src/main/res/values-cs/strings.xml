@@ -107,11 +107,11 @@
   <string name="dashboard_top_rated_movies">Top Rated Movies</string>
   <string name="dashboard_update_allow_installs" translatable="false">Allow Installs</string>
   <string name="dashboard_update_available">Novější verze aplikace je uložená v mezipaměti a připravená ke kontrole v Nastavení.</string>
-  <string name="dashboard_update_install_permission_required" translatable="false">The update is downloaded. Allow installs from StreamVault, then retry installation.</string>
+  <string name="dashboard_update_install_permission_required" translatable="false">The update is downloaded. Allow installs from FunBOX, then retry installation.</string>
   <string name="dashboard_update_install_ready">Nejnovější aktualizace už byla stažena. Otevřete Nastavení a nainstalujte ji.</string>
   <string name="dashboard_update_open_installer">Nainstalovat z Nastavení</string>
   <string name="dashboard_update_open_settings">Otevřít aktualizace</string>
-  <string name="dashboard_update_title">StreamVault %1$s je k dispozici</string>
+  <string name="dashboard_update_title">FunBOX %1$s je k dispozici</string>
   <string name="dashboard_updated_series">Aktualizovaná sériová police</string>
   <string name="dashboard_updated_series_badge">Aktualizovaná série</string>
   <string name="dashboard_warning_review">Otevřete Podrobnosti poskytovatele</string>
