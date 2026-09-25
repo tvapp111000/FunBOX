@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">StreamVault</string>
+  <string name="app_name">FunBOX</string>
   <string name="welcome_setup_provider">设置提供商</string>
   <string name="welcome_loading_title">正在准备您的媒体库</string>
   <string name="sync_section_live">Live</string>

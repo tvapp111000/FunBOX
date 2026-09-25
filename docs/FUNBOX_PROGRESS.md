@@ -173,3 +173,8 @@
 - The reduced-memory local `:app:assembleDebug` completed successfully. The resulting APK was copied to the task's `outputs/FunBOX-debug.apk`; source and copied SHA-256 hashes match.
 - Verified the copied build with Android build-tools: APK Signature Scheme v2 passes, one Android Debug signer, package `com.streamvault.app.debug`, version name `1.0.19-debug`, version code 21, minSdk 25, targetSdk 36. `aapt` reports application label **FunBOX**, a Leanback launcher, and packaged banner, icon, and FunBOX splash resources. Size is 60,964,227 bytes.
 - This APK is signed and suitable for Android installation. Actual `adb install` and opening the seven destinations could not be done locally because ADB showed no attached device and no emulator system image is installed. Unit tests and GitHub CI remain in progress; source/playback and account sync still need implementation/validation.
+
+## Stage 18 — localized product name cleanup
+
+- Checked all app and feature `strings.xml` translations. Replaced visible StreamVault product references with FunBOX in 130 resource files, including Hebrew setup, backup, notifications, update UI, and the system app-name string. The original repository URL and `Based on StreamVault` legal credit were deliberately preserved.
+- Resource compilation and a fresh signed APK are required after this change. The Stage 17 APK remains a verified build but does not yet contain these final localization edits.

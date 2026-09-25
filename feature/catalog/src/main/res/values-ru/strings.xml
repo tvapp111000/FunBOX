@@ -107,11 +107,11 @@
   <string name="dashboard_top_rated_movies">Top Rated Movies</string>
   <string name="dashboard_update_allow_installs" translatable="false">Allow Installs</string>
   <string name="dashboard_update_available">Доступна новая версия приложения, готовая к просмотру в настройках.</string>
-  <string name="dashboard_update_install_permission_required" translatable="false">The update is downloaded. Allow installs from StreamVault, then retry installation.</string>
+  <string name="dashboard_update_install_permission_required" translatable="false">The update is downloaded. Allow installs from FunBOX, then retry installation.</string>
   <string name="dashboard_update_install_ready">Последнее обновление уже загружено. Откройте настройки, чтобы установить его.</string>
   <string name="dashboard_update_open_installer">Установить из настроек</string>
   <string name="dashboard_update_open_settings">Открыть обновления</string>
-  <string name="dashboard_update_title">Доступен StreamVault %1$s</string>
+  <string name="dashboard_update_title">Доступен FunBOX %1$s</string>
   <string name="dashboard_updated_series">Обновлённая подборка сериалов</string>
   <string name="dashboard_updated_series_badge">Обновлённые сериалы</string>
   <string name="dashboard_warning_review">Открыть сведения о провайдере</string>

@@ -107,11 +107,11 @@
   <string name="dashboard_top_rated_movies">Top Rated Movies</string>
   <string name="dashboard_update_allow_installs" translatable="false">Allow Installs</string>
   <string name="dashboard_update_available">Une nouvelle version de l’application est en cache et prête à être consultée dans Paramètres.</string>
-  <string name="dashboard_update_install_permission_required" translatable="false">The update is downloaded. Allow installs from StreamVault, then retry installation.</string>
+  <string name="dashboard_update_install_permission_required" translatable="false">The update is downloaded. Allow installs from FunBOX, then retry installation.</string>
   <string name="dashboard_update_install_ready">La dernière mise à jour a déjà été téléchargée. Ouvrez Paramètres pour l’installer.</string>
   <string name="dashboard_update_open_installer">Installer depuis les paramètres</string>
   <string name="dashboard_update_open_settings">Ouvrir les mises à jour</string>
-  <string name="dashboard_update_title">StreamVault %1$s est disponible</string>
+  <string name="dashboard_update_title">FunBOX %1$s est disponible</string>
   <string name="dashboard_updated_series">Rayon des séries mis à jour</string>
   <string name="dashboard_updated_series_badge">Série mise à jour</string>
   <string name="dashboard_warning_review">Détails du fournisseur ouvert</string>
