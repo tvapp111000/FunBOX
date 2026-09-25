@@ -3,6 +3,8 @@ package com.streamvault.feature.catalog.presentation.favorites
 import android.content.Context
 import com.google.common.truth.Truth.assertThat
 import com.streamvault.data.preferences.PreferencesRepository
+import com.streamvault.data.remote.clipbox.ClipboxUserStateRepository
+import com.streamvault.data.remote.clipbox.ClipboxSavedTitle
 import com.streamvault.domain.model.ContentType
 import com.streamvault.domain.model.Favorite
 import com.streamvault.domain.model.LegacyProvider
@@ -48,6 +50,7 @@ class FavoritesViewModelTest {
     private val providerRepository: ProviderRepository = mock()
     private val preferencesRepository: PreferencesRepository = mock()
     private val getContinueWatching: com.streamvault.domain.usecase.GetContinueWatching = mock()
+    private val clipboxUserStateRepository: ClipboxUserStateRepository = mock()
     private val providers = MutableStateFlow<List<LegacyProvider>>(emptyList())
     private val activeProvider = MutableStateFlow<LegacyProvider?>(null)
     private val favorites = MutableStateFlow<List<Favorite>>(emptyList())
@@ -70,6 +73,8 @@ class FavoritesViewModelTest {
             .thenReturn(flowOf(com.streamvault.domain.usecase.ContinueWatchingResult.Items(emptyList())))
         whenever(appContext.getString(any())).thenAnswer { "resource-${it.arguments[0]}" }
         whenever(appContext.getString(any(), any())).thenAnswer { "resource-${it.arguments[0]}" }
+        whenever(clipboxUserStateRepository.items)
+            .thenReturn(MutableStateFlow<List<ClipboxSavedTitle>>(emptyList()))
 
         viewModel = FavoritesViewModel(
             appContext = appContext,
@@ -81,6 +86,7 @@ class FavoritesViewModelTest {
             providerRepository = providerRepository,
             preferencesRepository = preferencesRepository,
             getContinueWatching = getContinueWatching,
+            clipboxUserStateRepository = clipboxUserStateRepository,
         )
     }
 
@@ -145,6 +151,7 @@ class FavoritesViewModelTest {
             providerRepository = providerRepository,
             preferencesRepository = preferencesRepository,
             getContinueWatching = getContinueWatching,
+            clipboxUserStateRepository = clipboxUserStateRepository,
         )
         advanceUntilIdle()
 
@@ -209,6 +216,7 @@ class FavoritesViewModelTest {
             providerRepository = providerRepository,
             preferencesRepository = preferencesRepository,
             getContinueWatching = getContinueWatching,
+            clipboxUserStateRepository = clipboxUserStateRepository,
         )
         advanceUntilIdle()
 
