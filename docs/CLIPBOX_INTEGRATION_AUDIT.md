@@ -1,6 +1,6 @@
 # Clipbox APK integration audit
 
-Source: user-supplied `clipbox.apk` (analyzed locally; APK and decompiled output are not committed). This is a technical audit, not a claim that Clipbox has been integrated or validated in FunBOX. No credential values are recorded here.
+Source: user-supplied `clipbox.apk` (analyzed locally; APK and decompiled output are not committed). This is a technical audit with implementation status updated after the native catalog work. No credential values are recorded here.
 
 ## Package and platform
 
@@ -37,11 +37,11 @@ The primary Clipbox catalog is fetched from TMDB using a key delivered in signed
 
 | Flow | Status | Evidence or gap |
 | --- | --- | --- |
-| Home | Not completed | Live trending endpoint verified; FunBOX screen wiring pending |
-| Movies and series | Not completed | Live discover endpoints verified with result data; FunBOX screens pending |
-| Details, seasons, episodes | Not completed | Live detail, season, episode endpoints verified; UI wiring pending |
-| Search | Not completed | Live multi-search endpoint verified; unified repository pending |
-| Favorites and watchlist | Not completed | Sync endpoints identified; authentication/state schema unverified |
+| Home | Reimplemented | Native FunBOX Compose screen uses the verified Clipbox configuration and catalog flow; device rendering is unverified |
+| Movies and series | Reimplemented | Native catalog screens and pages are wired; device navigation is unverified |
+| Details, seasons, episodes | Reimplemented | Native details and episode metadata are wired; source selection and device navigation are unverified |
+| Search | Adapted | Unified search combines active IPTV channels with Clipbox movie and series catalog results; device navigation is unverified |
+| Favorites and watchlist | Adapted | Local guest favorite/watchlist state is wired into the unified library; Clipbox account sync is unverified |
 | Continue Watching | Not completed | Resume/history endpoints identified; no state adapter yet |
 | Sources and playback | Not completed | Media3 and source model identified; authorized live source retrieval unverified |
 | Settings | Not completed | Clipbox settings identified; mapping to unified Settings pending |
@@ -52,4 +52,4 @@ No secret has been committed or copied into this report. A static `X-App-Key` va
 
 ## Validation still required
 
-Live Clipbox configuration and its TMDB catalog endpoints are verified. Home, Movies, Series, details, seasons, episodes, search, favorites, watchlist, source retrieval, playback, and subtitles have not yet been demonstrated **inside FunBOX**. Do not mark those end-to-end acceptance criteria complete yet.
+Live Clipbox configuration and its TMDB catalog endpoints are verified. Native Home, Movies, Series, details, seasons, episodes, search, and guest saved state are implemented and compile, but no Android device or emulator was available to demonstrate their UI flows inside FunBOX. Source retrieval, VOD playback, subtitles, and account synchronization remain unimplemented or unverified. Do not mark those end-to-end acceptance criteria complete yet.

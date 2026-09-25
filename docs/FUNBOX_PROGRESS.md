@@ -183,3 +183,11 @@
 
 - Downloaded and decompressed the `url-tvg` XMLTV advertised by the current FanTV playlist. Of 14 playlist `tvg-id` values, 13 match XMLTV channel IDs, with 4,300 programmes for those matches.
 - The newest programme ends on **15 August 2026**, while the current date is 25 September 2026. The feed is stale and contains no current or future programmes. FunBOX still discovers the header URL automatically, but Now/Next cannot show current guide data from this source until the provider refreshes it. This is a source-data limitation; do not mark current EPG playback/Now-Next as verified.
+
+## Stage 20 — final localized signed APK and CI
+
+- The final local `:app:assembleDebug` completed successfully after the 130-file localization cleanup. Copied the resulting APK to `outputs/FunBOX-debug.apk`; source and delivery SHA-256 hashes match: `4BA840615DB88CD5E5D4BFB0946FC0D0E15CF90E51932AE6573C97E551609755`. Its size is 55,964,291 bytes.
+- Verified the delivered file with `apksigner`: v2 signature passes with one Android Debug signer. `aapt` reports application label `FunBOX`, package `com.streamvault.app.debug`, version `1.0.19-debug` / code 21, minimum SDK 25, target SDK 36, a Leanback launcher entry, and packaged icon, banner, and splash resources. The authorized Clipbox app key and signing digest are configured and embedded in this **local delivery APK**; their values were not printed or committed.
+- GitHub Actions run `36106467342` passed the debug APK build and the complete `testDebugUnitTest` workflow for the current branch. A local full test run was stopped to prioritize delivery after 164 completed tests reported zero failures; CI provides the full passing test result.
+- ADB found no connected device, and no local emulator system image is installed. Installation, seven-screen navigation, Hebrew/RTL appearance on a device, D-Pad focus, and live playback remain unverified. No release signing key was available, so the installable deliverable is the signed debug APK.
+- Updated the Clipbox audit status to reflect the implemented native catalog UI and guest saved state while retaining the open source/playback and on-device validation gaps. See `docs/FUNBOX_DELIVERY_REPORT_HE.md` for the component-level report.
