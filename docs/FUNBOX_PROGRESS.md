@@ -161,3 +161,9 @@
 - The second local build reached DEX generation but its Gradle JVM crashed from insufficient memory/quota; the drive still has free space. Retrying with one worker, less heap, and no parallel Gradle tasks is the next local recovery step.
 - CI compiled the Android app and reached unit tests. It found that the new search repository constructor was not supplied by four existing tests, and a route test invoked Android `Uri.encode` without Robolectric. Updated the search tests for Clipbox results and moved the route assertion into the existing Robolectric suite.
 - The CI workflow now uploads the signed debug APK immediately after `assembleDebug`, then runs unit tests. This keeps an installable artifact available even if a test reports a separate failure. No artifact has been downloaded or verified at this checkpoint.
+
+## Stage 16 — local APK inspection and launcher label fix
+
+- A local `app-debug.apk` was produced before the Gradle JVM failed later in the build. `apksigner` verified its Android debug certificate and v2 signature. `aapt` found package `com.streamvault.app.debug`, version `1.0.19-debug` / code 21, minimum SDK 25, and a Leanback launcher entry.
+- `aapt` also found the debug launcher label `StreamVault Debug`. Corrected `app/src/debug/res/values/strings.xml` to `FunBOX`. The old APK is **not** the deliverable; a reduced-memory rebuild is running, and its actual label and signature must be rechecked.
+- No device was attached to ADB, so installation and on-device navigation remain unverified.
