@@ -33,6 +33,12 @@ The primary Clipbox catalog is fetched from TMDB using a key delivered in signed
 
 `PlayerActivity` uses AndroidX Media3 `PlayerView`. The APK's `StreamSource` carries a stream URL plus source metadata, a headers map, and a subtitle list. This aligns with adapting sources to StreamVault's Media3 player, but the source retrieval and player handoff contract still need live verification. `MyListActivity`, `TvMyListActivity`, `HistoryActivity`, and detail state show favorites/watchlist/history/resume behavior; some settings and playback state are stored in SharedPreferences. Exact key schema and sync conflict behavior require further audit.
 
+## Source discovery follow-up (27 September 2026)
+
+A fresh analysis of the user-supplied Clipbox 1.6.1 APK with JADX confirms that `PlayerActivity` accepts `StreamSource` objects and uses Media3. The APK also bundles a separate `com.streamflixreborn.streamflix` package with many site-specific `Provider` implementations and extractors. This package is distinct from Clipbox's signed account/configuration API and the TMDB catalog. The present FunBOX detail screen has no Play action or player route for Clipbox titles. Merely bundling the APK as an asset or launching its installed package would not put its activities under the FunBOX navigation shell.
+
+The audit has **not** established which of those bundled providers Clipbox actually enables for a given title, the caller-to-provider selection contract, or a stream endpoint authorized for FunBOX. Before porting playback, trace the concrete call path from TV detail through source selection to `StreamSource`, identify permitted source hosts and account requirements, then verify first frame and sustained playback on a device. No provider code or extracted credentials have been committed.
+
 ## Integration status
 
 | Flow | Status | Evidence or gap |
