@@ -35,28 +35,28 @@ class ClipboxBrowseViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     fun open(kind: ClipboxBrowseKind) {
-        if (_state.value.kind == kind && (_state.value.titles.isNotEmpty() || _state.value.shelves.isNotEmpty())) return
+        if (_state.value.kind == kind && _state.value.shelves.isNotEmpty()) return
         _state.value = ClipboxBrowseState(kind = kind)
         loadMore()
     }
 
     fun loadMore() {
         val current = _state.value
-        if (current.loading || current.kind == null || current.kind == ClipboxBrowseKind.HOME && current.page > 0) return
+        if (current.loading || current.kind == null || current.page > 0) return
         val nextPage = current.page + 1
         _state.update { it.copy(loading = true, error = null) }
         viewModelScope.launch {
             runCatching {
                 when (current.kind) {
                     ClipboxBrowseKind.HOME -> repository.home() to emptyList<ClipboxTitle>()
-                    ClipboxBrowseKind.MOVIES -> emptyList<ClipboxShelf>() to repository.movies(nextPage)
-                    ClipboxBrowseKind.SERIES -> emptyList<ClipboxShelf>() to repository.series(nextPage)
+                    ClipboxBrowseKind.MOVIES -> repository.movieShelves() to emptyList<ClipboxTitle>()
+                    ClipboxBrowseKind.SERIES -> repository.seriesShelves() to emptyList<ClipboxTitle>()
                     null -> error("Clipbox screen type is missing")
                 }
             }.onSuccess { (shelves, titles) ->
                 _state.update {
                     it.copy(
-                        shelves = if (current.kind == ClipboxBrowseKind.HOME) shelves else it.shelves,
+                        shelves = shelves,
                         titles = (it.titles + titles).distinctBy(ClipboxTitle::id),
                         page = nextPage,
                         loading = false,

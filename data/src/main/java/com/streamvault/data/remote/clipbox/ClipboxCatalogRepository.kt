@@ -5,7 +5,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -58,16 +58,60 @@ class ClipboxCatalogRepository @Inject constructor(private val clipboxApi: Clipb
     @Volatile private var cachedKey: Pair<String, Long>? = null
     private val pageCache = ConcurrentHashMap<String, Pair<Long, List<ClipboxTitle>>>()
 
-    suspend fun home(): List<ClipboxShelf> = coroutineScope {
-        val trending = async { trending() }
-        val movies = async { movies() }
-        val series = async { series() }
-        listOf(
-            ClipboxShelf("מומלצים השבוע", trending.await()),
-            ClipboxShelf("סרטים פופולריים", movies.await()),
-            ClipboxShelf("סדרות פופולריות", series.await()),
+    suspend fun home(): List<ClipboxShelf> = supervisorScope {
+        // Order follows the home tab's rail descriptors in Clipbox's TvHomeActivity.
+        val rails = listOf(
+            "מגמות עכשיו" to async { trending() },
+            "סרטים פופולריים" to async { movies() },
+            "סדרות פופולריות" to async { series() },
+            "אנימה" to async { seriesByGenre(16) },
+            "פעולה" to async { moviesByGenre(28) },
+            "קומדיה" to async { moviesByGenre(35) },
+            "אימה" to async { moviesByGenre(27) },
+            "מדע בדיוני" to async { moviesByGenre(878) },
+            "אנימציה" to async { moviesByGenre(16) },
         )
+        rails.mapNotNull { (name, result) ->
+            runCatching { result.await() }.getOrNull()?.takeIf { it.isNotEmpty() }?.let { ClipboxShelf(name, it.take(12)) }
+        }
     }
+
+    suspend fun movieShelves(): List<ClipboxShelf> = supervisorScope {
+        val rails = listOf(
+            "יצאו לאחרונה" to async { list("/movie/now_playing", 1, ClipboxMediaType.MOVIE) },
+            "סרטים פופולריים" to async { movies() },
+            "פעולה" to async { moviesByGenre(28) },
+            "קומדיה" to async { moviesByGenre(35) },
+            "אימה" to async { moviesByGenre(27) },
+            "מדע בדיוני" to async { moviesByGenre(878) },
+            "דרמה" to async { moviesByGenre(18) },
+        )
+        rails.mapNotNull { (name, result) ->
+            runCatching { result.await() }.getOrNull()?.takeIf { it.isNotEmpty() }?.let { ClipboxShelf(name, it.take(12)) }
+        }
+    }
+
+    suspend fun seriesShelves(): List<ClipboxShelf> = supervisorScope {
+        val rails = listOf(
+            "משודרות עכשיו" to async { list("/tv/on_the_air", 1, ClipboxMediaType.SERIES) },
+            "סדרות פופולריות" to async { series() },
+            "מגמות עכשיו" to async { list("/trending/tv/week", 1, ClipboxMediaType.SERIES) },
+            "דרמה" to async { seriesByGenre(18) },
+            "אנימה" to async { seriesByGenre(16) },
+            "קומדיה" to async { seriesByGenre(35) },
+        )
+        rails.mapNotNull { (name, result) ->
+            runCatching { result.await() }.getOrNull()?.takeIf { it.isNotEmpty() }?.let { ClipboxShelf(name, it.take(12)) }
+        }
+    }
+
+    private suspend fun moviesByGenre(genre: Int) = list(
+        "/discover/movie", 1, ClipboxMediaType.MOVIE, "sort_by" to "popularity.desc", "with_genres" to genre.toString(),
+    )
+
+    private suspend fun seriesByGenre(genre: Int) = list(
+        "/discover/tv", 1, ClipboxMediaType.SERIES, "sort_by" to "popularity.desc", "with_genres" to genre.toString(),
+    )
 
     suspend fun trending(page: Int = 1): List<ClipboxTitle> = list(
         "/trending/all/week", page, ClipboxMediaType.MOVIE,
