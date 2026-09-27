@@ -20,7 +20,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -57,7 +64,20 @@ fun ClipboxBrowseScreen(
         ClipboxBrowseKind.MOVIES -> "סרטים"
         ClipboxBrowseKind.SERIES -> "סדרות"
     }
+    var focusedTitle by remember(kind) { mutableStateOf<ClipboxTitle?>(null) }
+    val featured = focusedTitle ?: state.shelves.firstOrNull()?.items?.firstOrNull()
     scaffold(destination, heading, null, CatalogNavigationChrome.TopBar, true, true, false) {
+        Box(Modifier.fillMaxSize().background(Color(0xFF090B10))) {
+        if (featured != null) {
+            AsyncImage(
+                model = featured.backdropUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+            )
+            Box(Modifier.fillMaxSize().background(Brush.horizontalGradient(listOf(Color(0xF5090B10), Color(0x99090B10), Color.Transparent))))
+            Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Transparent, Color(0x66090B10), Color(0xFF090B10)))))
+        }
         LazyColumn(
             state = rememberLazyListState(),
             modifier = Modifier.fillMaxSize(),
@@ -66,25 +86,16 @@ fun ClipboxBrowseScreen(
         ) {
             if (kind == ClipboxBrowseKind.HOME) {
                 item(key = "account") { TvButton(onClick = onAccountClick) { Text("חשבון Clipbox") } }
-                val featured = state.shelves.firstOrNull()?.items?.firstOrNull()
-                if (featured != null) item(key = "hero") { ClipboxHero(featured, onTitleClick) }
-                state.shelves.forEachIndexed { index, shelf ->
-                    item(key = "shelf:$index") {
-                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Text(shelf.title, style = MaterialTheme.typography.headlineSmall)
-                            LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                                items(shelf.items, key = { "${it.type}:${it.id}" }) { title ->
-                                    ClipboxPoster(title, onTitleClick)
-                                }
+            }
+            if (featured != null) item(key = "hero") { ClipboxHero(featured, onTitleClick) }
+            state.shelves.forEachIndexed { index, shelf ->
+                item(key = "shelf:$index") {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text(shelf.title, style = MaterialTheme.typography.headlineSmall)
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            items(shelf.items, key = { "${it.type}:${it.id}" }) { title ->
+                                ClipboxPoster(title, onTitleClick, onFocus = { focusedTitle = title })
                             }
-                        }
-                    }
-                }
-            } else {
-                state.titles.chunked(6).forEachIndexed { index, row ->
-                    item(key = "row:$index") {
-                        Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                            row.forEach { ClipboxPoster(it, onTitleClick) }
                         }
                     }
                 }
@@ -98,54 +109,46 @@ fun ClipboxBrowseScreen(
                     }
                 }
             }
-            if (kind != ClipboxBrowseKind.HOME && state.titles.isNotEmpty() && !state.loading) {
-                item(key = "more") { TvButton(onClick = viewModel::loadMore) { Text("טען עוד") } }
-            }
+        }
         }
     }
 }
 
 @Composable
 private fun ClipboxHero(title: ClipboxTitle, onTitleClick: (ClipboxTitle) -> Unit) {
-    TvClickableSurface(
-        onClick = { onTitleClick(title) },
-        shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(18.dp)),
-        modifier = Modifier.fillMaxWidth().height(280.dp),
-    ) {
-        Box(Modifier.fillMaxSize()) {
-            AsyncImage(
-                model = title.backdropUrl,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-            )
-            Column(
-                modifier = Modifier.align(androidx.compose.ui.Alignment.BottomStart)
-                    .fillMaxWidth()
-                    .background(androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.65f))
-                    .padding(18.dp),
-            ) {
-                Text(title.title, style = MaterialTheme.typography.headlineMedium)
-                Text(title.overview, maxLines = 2, style = MaterialTheme.typography.bodyMedium)
-            }
+    Box(Modifier.fillMaxWidth().height(360.dp)) {
+        Column(
+            modifier = Modifier.align(Alignment.BottomStart).width(620.dp).padding(bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            Text(title.title, style = MaterialTheme.typography.displayMedium)
+            Text(title.releaseDate.take(4), style = MaterialTheme.typography.titleMedium)
+            Text(title.overview, maxLines = 3, style = MaterialTheme.typography.bodyLarge)
+            TvButton(onClick = { onTitleClick(title) }) { Text("פרטים") }
         }
     }
 }
 
 @Composable
-internal fun ClipboxPoster(title: ClipboxTitle, onTitleClick: (ClipboxTitle) -> Unit) {
-    Column(modifier = Modifier.width(150.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+internal fun ClipboxPoster(title: ClipboxTitle, onTitleClick: (ClipboxTitle) -> Unit, onFocus: () -> Unit = {}) {
+    Column(modifier = Modifier.width(124.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
         TvClickableSurface(
             onClick = { onTitleClick(title) },
             shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(10.dp)),
-            modifier = Modifier.width(150.dp).height(220.dp),
+            modifier = Modifier.width(124.dp).height(186.dp).onFocusChanged { if (it.isFocused) onFocus() },
         ) {
-            AsyncImage(
-                model = title.posterUrl,
-                contentDescription = title.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-            )
+            Box(Modifier.fillMaxSize()) {
+                AsyncImage(
+                    model = title.posterUrl,
+                    contentDescription = title.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                )
+                Row(Modifier.align(Alignment.BottomStart).fillMaxWidth().background(Color(0x99000000)).padding(4.dp)) {
+                    Text("★ %.1f".format(title.rating), style = MaterialTheme.typography.labelSmall)
+                    Text("  ${title.releaseDate.take(4)}", style = MaterialTheme.typography.labelSmall)
+                }
+            }
         }
         Text(title.title, maxLines = 2, style = MaterialTheme.typography.bodyMedium)
     }
